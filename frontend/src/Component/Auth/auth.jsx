@@ -1,0 +1,241 @@
+import React, { useState } from 'react';
+import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+
+export default function Auth() {
+  const [isSignUp, setIsSignUp] = useState(true);
+  const [role, setRole] = useState('farmer');
+  const [selectedCountry, setSelectedCountry] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+
+  const maghrebRegions = {
+    algeria: ["Algiers", "Oran", "Constantine", "Béjaïa", "Sétif", "Batna"],
+    morocco: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier"],
+    tunisia: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
+    mauritania: ["Nouakchott", "Nouadhibou", "Rosso"],
+    libya: ["Tripoli", "Benghazi", "Misrata"]
+  };
+
+  return (
+    <div className="h-screen w-screen bg-[#0E1A0B] bg-gradient-to-br from-[#0E1A0B] via-[#162A12] to-[#1F3319] flex items-center justify-center p-4 font-sans relative overflow-hidden">
+      
+      {/* === DÉCORATIONS D'ARRIÈRE-PLAN === */}
+      <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
+
+      {/* BOUTON RETOUR VOLANT */}
+      <Link 
+        to="/" 
+        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-xl"
+      >
+        <ArrowLeft size={14} />
+        Back home
+      </Link>
+
+      {/* === CARTE PRINCIPALE AJUSTÉE (PAS DE SCROLL) === */}
+      <motion.div 
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className="w-full max-w-3xl bg-[#FCFBF7] rounded-[2.5rem] shadow-[0_25px_70px_-15px_rgba(0,0,0,0.5)] border border-white/60 p-6 sm:p-10 relative z-10 overflow-hidden"
+      >
+        <Leaf className="absolute -right-12 -top-12 text-[#557A46]/5 w-48 h-48 -rotate-45 pointer-events-none" strokeWidth={1} />
+        
+        {/* EN-TÊTE DU FORMULAIRE */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-5 mb-5">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#1A3619] text-[#FAF9F4]">
+              <Leaf size={16} strokeWidth={2.5} />
+            </div>
+            <div>
+              <span className="text-[10px] font-bold tracking-widest text-[#557A46] block">AgriConnect</span>
+              <h2 className="text-xl font-serif font-bold text-gray-900">
+                {isSignUp ? 'Create your space' : 'Welcome back'}
+              </h2>
+            </div>
+          </div>
+
+          {/* ONGLET DE BASCULE */}
+          <div className="flex bg-gray-100/80 p-1 rounded-xl sm:w-56">
+            <button
+              onClick={() => setIsSignUp(true)}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
+                isSignUp ? 'bg-white text-[#D96B40] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              Sign Up
+            </button>
+            <button
+              onClick={() => setIsSignUp(false)}
+              className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
+                !isSignUp ? 'bg-white text-[#D96B40] shadow-sm' : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              Sign In
+            </button>
+          </div>
+        </div>
+
+        {/* FORMULAIRE COMPACT */}
+        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          
+          {/* SÉLECTEUR DE RÔLE */}
+          {isSignUp && (
+            <div className="space-y-1.5">
+              <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                I want to register as a
+              </label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { id: 'farmer', label: 'Farmer', icon: Sprout },
+                  { id: 'buyer', label: 'Buyer', icon: ShoppingBasket },
+                  { id: 'transporter', label: 'Transporter', icon: Truck }
+                ].map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setRole(item.id)}
+                      className={`flex items-center justify-center gap-2 p-2.5 rounded-xl border-2 transition-all duration-200 ${
+                        role === item.id 
+                          ? 'bg-white border-[#1A3619] text-[#1A3619] font-bold shadow-sm' 
+                          : 'bg-transparent border-gray-200 text-gray-500 hover:border-gray-300'
+                      }`}
+                    >
+                      <Icon size={14} className={role === item.id ? 'text-[#557A46]' : 'text-gray-400'} />
+                      <span className="text-xs">{item.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* GRILLE DES CHAMPS */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            
+            {/* NOM COMPLET */}
+            {isSignUp && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                  Full Name
+                </label>
+                <input 
+                  type="text" 
+                  placeholder="Amine Benali" 
+                  className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                />
+              </div>
+            )}
+
+            {/* EMAIL */}
+            <div className={`space-y-1 ${!isSignUp ? 'sm:col-span-2' : ''}`}>
+              <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                Email Address
+              </label>
+              <input 
+                type="email" 
+                placeholder="you@domain.com" 
+                className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+              />
+            </div>
+
+            {/* MOT DE PASSE AVEC TOGGLE ŒIL */}
+            <div className={`space-y-1 ${!isSignUp ? 'sm:col-span-2' : ''}`}>
+              <div className="flex justify-between items-center">
+                <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                  Password
+                </label>
+                {!isSignUp && (
+                  <Link to="/forgot-password" 
+                  className="text-[10px] font-bold text-[#D96B40] hover:text-[#c85a30] transition-colors"
+                   > Forgot password?
+                  </Link>
+                )}
+              </div>
+              <div className="relative">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  className="w-full px-4 pr-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                </button>
+              </div>
+            </div>
+
+            {/* PAYS ET RÉGION */}
+            {isSignUp && (
+              <>
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                    Country
+                  </label>
+                  <div className="relative">
+                    <select 
+                      value={selectedCountry}
+                      onChange={(e) => setSelectedCountry(e.target.value)}
+                      className="w-full px-4 pl-9 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all appearance-none text-sm cursor-pointer"
+                    >
+                      <option value="" disabled>Select country</option>
+                      <option value="algeria">Algeria</option>
+                      <option value="morocco">Morocco</option>
+                      <option value="tunisia">Tunisia</option>
+                      <option value="mauritania">Mauritania</option>
+                      <option value="libya">Libya</option>
+                    </select>
+                    <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                    Region / City
+                  </label>
+                  <div className="relative">
+                    <select 
+                      defaultValue="" 
+                      disabled={!selectedCountry}
+                      className="w-full px-4 pl-9 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all appearance-none text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-300 disabled:cursor-not-allowed"
+                    >
+                      <option value="" disabled>
+                        {selectedCountry ? "Select region" : "Select country"}
+                      </option>
+                      {selectedCountry && maghrebRegions[selectedCountry].map((city) => (
+                        <option key={city} value={city.toLowerCase()}>{city}</option>
+                      ))}
+                    </select>
+                    <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+          </div>
+
+          {/* BOUTON DE SOUMISSION COULEUR TERRACOTTA */}
+          <button 
+            type="submit"
+            className="w-full mt-2 bg-[#D96B40] hover:bg-[#c85a30] text-white font-semibold py-3 rounded-xl shadow-lg shadow-[#D96B40]/20 transition-all active:scale-[0.99] text-sm tracking-wide"
+          >
+            {isSignUp ? 'Get Started Now' : 'Sign In to Account'}
+          </button>
+
+        </form>
+      </motion.div>
+    </div>
+  );
+}
