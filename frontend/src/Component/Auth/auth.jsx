@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import axios from 'axios';
 
 export default function Auth() {
+  const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(true);
   const [role, setRole] = useState('farmer');
   const [selectedCountry, setSelectedCountry] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [region, setRegion] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const maghrebRegions = {
     algeria: ["Algiers", "Oran", "Constantine", "Béjaïa", "Sétif", "Batna"],
@@ -15,6 +24,45 @@ export default function Auth() {
     tunisia: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
     mauritania: ["Nouakchott", "Nouadhibou", "Rosso"],
     libya: ["Tripoli", "Benghazi", "Misrata"]
+  };
+
+  // --- FONCTION DE CONNEXION / INSCRIPTION ---
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setErrorMessage('');
+    setLoading(true);
+
+    // Ajuste l'URL selon la configuration de ton serveur Node (ex: http://localhost:5000)
+    const API_URL = "http://localhost:3000/api/auth"; 
+
+    try {
+      if (isSignUp) {
+        // Envoi des données d'inscription au backend
+        const response = await axios.post(`${API_URL}/signup`, {
+          name,
+          email,
+          password,
+          role,
+          country: selectedCountry,
+          region
+        }, { withCredentials: true }); // Permet de stocker les cookies JWT si nécessaire
+
+        if (response.data.success) {
+          // Rediriger vers la page de vérification d'email ou tableau de bord
+          navigate('/verify-email'); 
+        }
+      } else {
+        // Envoi des données de connexion au backend
+        const response = await axios.post(`${API_URL}/login`, { email, password });
+        if (response.data.success) {
+          navigate('/dashboard');
+        }
+      }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Une erreur est survenue.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
