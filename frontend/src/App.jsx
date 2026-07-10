@@ -6,6 +6,8 @@ import { Home } from './Component/HomePage/Home.jsx';
 import About from './Component/about.jsx';
 import Auth from './Component/Auth/auth.jsx';
 import Forgot from './Component/Auth/ForgotPassword';
+import Verify from './Component/Auth/VerifyEmail.jsx';
+import Reset from './Component/Auth/ResetPassword.jsx';
 
 import './App.css'
 
@@ -29,6 +31,9 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/forgot-password" element={<Forgot />} />
+          <Route path="/verify-email" element={<Verify />} />
+          <Route path="/reset-password" element={<Reset />} />
+          
         </Routes>
       </main>
       

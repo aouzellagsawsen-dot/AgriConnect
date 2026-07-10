@@ -1,56 +1,53 @@
 import React, { useState } from 'react';
-import { Leaf, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { Leaf, Lock, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios'; // ⚠️ Ne pas oublier cet import !
+import axios from 'axios';
 
-export default function ForgotPassword() {
-  const [email, setEmail] = useState('');
-  const [step, setStep] = useState('email'); // 'email' ou 'success'
+export default function ResetPassword() {
+  const { token } = useParams(); // Récupère le token de l'URL de l'email
   
-  // Nouveaux états pour gérer le chargement et les erreurs
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [step, setStep] = useState('form'); // 'form' ou 'success'
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-    
-    if (email.trim() !== '') {
-      setLoading(true);
-      try {
-        // ENVOI DE LA REQUÊTE AU BACKEND
-        const response = await axios.post('http://localhost:3000/api/auth/forgot-password', { 
-          email 
-        }, { withCredentials: true });
 
-        if (response.data.success) {
-          setStep('success'); // On n'affiche l'écran de succès QUE si le backend a réussi
-        }
-      } catch (error) {
-        // On affiche l'erreur envoyée par le backend (ex: "User not found")
-        setErrorMessage(error.response?.data?.message || "Une erreur est survenue.");
-      } finally {
-        setLoading(false);
+    // Vérifications basiques côté client
+    if (password !== confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      // Envoi de la requête de réinitialisation vers ton backend
+      const response = await axios.post(`http://localhost:3000/api/auth/reset-password/${token}`, { 
+        password 
+      }, { withCredentials: true });
+
+      if (response.data.success) {
+        setStep('success');
       }
+    } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Link expired or invalid token.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="h-screen w-screen bg-[#0E1A0B] bg-gradient-to-br from-[#0E1A0B] via-[#162A12] to-[#1F3319] flex items-center justify-center p-4 font-sans relative overflow-hidden">
       
-      {/* === DÉCORATIONS D'ARRIÈRE-PLAN === */}
+      {/* === DECORATIONS === */}
       <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
-
-      {/* BOUTON RETOUR VOLANT */}
-      <Link 
-        to="/auth" 
-        className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-xl"
-      >
-        <ArrowLeft size={14} />
-        Back to Sign In
-      </Link>
 
       {/* === CARTE PRINCIPALE === */}
       <motion.div 
@@ -62,9 +59,10 @@ export default function ForgotPassword() {
         <Leaf className="absolute -right-12 -top-12 text-[#557A46]/5 w-48 h-48 -rotate-45 pointer-events-none" strokeWidth={1} />
         
         <AnimatePresence mode="wait">
-          {step === 'email' ? (
+          {step === 'form' ? (
+            /* === ETAPE 1 : FORMULAIRE NOUVEAU MOT DE PASSE === */
             <motion.div
-              key="email-step"
+              key="reset-form-step"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
@@ -80,32 +78,58 @@ export default function ForgotPassword() {
                   </div>
                 </div>
                 <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                  Forgot Password?
+                  Reset Password
                 </h2>
                 <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed">
-                  No worries! Enter your email address below and we'll send you a link to reset your password.
+                  Enter your new password below to regain secure access to your account.
                 </p>
               </div>
 
               <form className="space-y-4" onSubmit={handleSubmit}>
+                {/* CHAMP 1 : NOUVEAU MOT DE PASSE */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
-                    Email Address
+                    New Password
                   </label>
                   <div className="relative">
                     <input 
-                      type="email" 
+                      type={showPassword ? "text" : "password"} 
                       required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@domain.com" 
-                      className="w-full px-4 pl-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••" 
+                      className="w-full px-4 pl-10 pr-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
                     />
-                    <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <Lock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={14} /> : <Eye size={14} />}
+                    </button>
                   </div>
                 </div>
 
-                {/* AFFICHAGE DE L'ERREUR */}
+                {/* CHAMP 2 : CONFIRMATION */}
+                <div className="space-y-1.5">
+                  <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                    Confirm New Password
+                  </label>
+                  <div className="relative">
+                    <input 
+                      type={showPassword ? "text" : "password"} 
+                      required
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••••" 
+                      className="w-full px-4 pl-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                    />
+                    <Lock size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  </div>
+                </div>
+
+                {/* AFFICHAGE DES ERREURS */}
                 {errorMessage && (
                   <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
                     {errorMessage}
@@ -117,13 +141,14 @@ export default function ForgotPassword() {
                   disabled={loading}
                   className="w-full mt-2 bg-[#D96B40] hover:bg-[#c85a30] text-white font-semibold py-3 rounded-xl shadow-lg shadow-[#D96B40]/20 transition-all active:scale-[0.99] text-sm tracking-wide disabled:opacity-70 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Sending...' : 'Send Reset Link'}
+                  {loading ? 'Updating...' : 'Update Password'}
                 </button>
               </form>
             </motion.div>
           ) : (
+            /* === ETAPE 2 : SUCCÈS === */
             <motion.div
-              key="success-step"
+              key="reset-success-step"
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 10 }}
@@ -133,30 +158,20 @@ export default function ForgotPassword() {
               <div className="mx-auto flex items-center justify-center w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-600 mb-4">
                 <CheckCircle2 size={24} strokeWidth={2.5} />
               </div>
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 block mb-1">Link Sent</span>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 block mb-1">Success</span>
               <h2 className="text-2xl font-serif font-bold text-gray-900 mb-2">
-                Check your inbox
+                Password Updated
               </h2>
               <p className="text-xs text-gray-500 max-w-xs mx-auto leading-relaxed mb-6">
-                We have sent a password reset link to <strong className="text-gray-800 font-medium">{email}</strong>. Please follow the instructions inside.
+                Your password has been successfully reset. You can now securely log in with your new credentials.
               </p>
 
-              <div className="space-y-3">
-                <button 
-                  onClick={handleSubmit} // Relance la requête d'envoi au lieu de juste changer l'écran
-                  disabled={loading}
-                  className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition-all text-xs disabled:opacity-50"
-                >
-                  {loading ? 'Sending...' : 'Resend Email'}
-                </button>
-                
-                <Link 
-                  to="/auth"
-                  className="block w-full text-center text-xs font-bold text-[#D96B40] hover:text-[#c85a30] pt-2"
-                >
-                  Return to login page
-                </Link>
-              </div>
+              <Link 
+                to="/auth"
+                className="block w-full text-center bg-[#1A3619] hover:bg-[#122612] text-white font-semibold py-3 rounded-xl transition-all text-sm"
+              >
+                Sign In Now
+              </Link>
             </motion.div>
           )}
         </AnimatePresence>

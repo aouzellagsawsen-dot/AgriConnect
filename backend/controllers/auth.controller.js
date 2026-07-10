@@ -7,7 +7,7 @@ import axios from "axios"
 import { OAuth2Client } from 'google-auth-library';
 
 export const signup = async (req, res) => {
-  const { email, password, name, role, country, region } = req.body
+  const { email, password, name, phone, role, country, region } = req.body
   try {
     if (!email || !password || !name || !role) {
       return res.status(400).json({ success: false, message: "All fields are required" });
@@ -23,6 +23,7 @@ export const signup = async (req, res) => {
       email,
       password: hashedPassword,
       name,
+      phone,
       role,
       country,
       region,

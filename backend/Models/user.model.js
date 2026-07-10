@@ -13,6 +13,11 @@ const userSchema = new mongoose.Schema({
          type:String,
         required:true
     },
+    phone: {
+        type: String,
+        required: true,
+        match: [/^\d{10}$/, 'Le numéro de téléphone doit contenir exactement 10 chiffres.']
+    },
     role: {
         type: String,
         enum: ['farmer', 'buyer', 'transporter'], // Restreint aux rôles de ton Front
@@ -28,7 +33,7 @@ const userSchema = new mongoose.Schema({
     },
     lastLogin:{
         type:Date,
-        default:Date.now()
+        default:Date.now
     },
     isVerified:{
         type:Boolean,

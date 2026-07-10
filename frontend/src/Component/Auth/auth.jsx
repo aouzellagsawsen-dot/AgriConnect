@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff } from 'lucide-react';
+import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff, Phone } from 'lucide-react'; // Ajout de l'icône Phone
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -14,6 +14,7 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState(''); // Nouvel état pour le téléphone
   const [region, setRegion] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,40 +27,54 @@ export default function Auth() {
     libya: ["Tripoli", "Benghazi", "Misrata"]
   };
 
+  // --- GESTION DU CHAMP TÉLÉPHONE ---
+  const handlePhoneChange = (e) => {
+    // Supprime tout ce qui n'est pas un chiffre
+    const onlyNumbers = e.target.value.replace(/\D/g, '');
+    // Limite à 10 chiffres max
+    if (onlyNumbers.length <= 10) {
+      setPhone(onlyNumbers);
+    }
+  };
+
   // --- FONCTION DE CONNEXION / INSCRIPTION ---
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
     setLoading(true);
 
-    // Ajuste l'URL selon la configuration de ton serveur Node (ex: http://localhost:5000)
     const API_URL = "http://localhost:3000/api/auth"; 
 
     try {
       if (isSignUp) {
-        // Envoi des données d'inscription au backend
+        // Validation : Vérifie qu'il y a exactement 10 chiffres
+        if (phone.length !== 10) {
+          setErrorMessage("Phone number must contain exactly 10 digits.");
+          setLoading(false);
+          return;
+        }
+
         const response = await axios.post(`${API_URL}/signup`, {
           name,
           email,
           password,
+          phone, // Ajout du téléphone dans l'envoi
           role,
           country: selectedCountry,
           region
-        }, { withCredentials: true }); // Permet de stocker les cookies JWT si nécessaire
+        }, { withCredentials: true });
 
         if (response.data.success) {
-          // Rediriger vers la page de vérification d'email ou tableau de bord
           navigate('/verify-email'); 
         }
       } else {
-        // Envoi des données de connexion au backend
         const response = await axios.post(`${API_URL}/login`, { email, password });
         if (response.data.success) {
           navigate('/dashboard');
         }
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Une erreur est survenue.");
+      setErrorMessage(error.response?.data?.message || "An error occurred.");
     } finally {
       setLoading(false);
     }
@@ -81,7 +96,7 @@ export default function Auth() {
         Back home
       </Link>
 
-      {/* === CARTE PRINCIPALE AJUSTÉE (PAS DE SCROLL) === */}
+      {/* === CARTE PRINCIPALE === */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -104,10 +119,10 @@ export default function Auth() {
             </div>
           </div>
 
-          {/* ONGLET DE BASCULE */}
           <div className="flex bg-gray-100/80 p-1 rounded-xl sm:w-56">
             <button
-              onClick={() => setIsSignUp(true)}
+              type="button"
+              onClick={() => { setIsSignUp(true); setErrorMessage(''); }}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
                 isSignUp ? 'bg-white text-[#D96B40] shadow-sm' : 'text-gray-500 hover:text-gray-800'
               }`}
@@ -115,7 +130,8 @@ export default function Auth() {
               Sign Up
             </button>
             <button
-              onClick={() => setIsSignUp(false)}
+              type="button"
+              onClick={() => { setIsSignUp(false); setErrorMessage(''); }}
               className={`flex-1 py-1.5 text-xs font-bold rounded-lg transition-all duration-200 ${
                 !isSignUp ? 'bg-white text-[#D96B40] shadow-sm' : 'text-gray-500 hover:text-gray-800'
               }`}
@@ -126,7 +142,7 @@ export default function Auth() {
         </div>
 
         {/* FORMULAIRE COMPACT */}
-        <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+        <form className="space-y-4" onSubmit={handleSubmit}>
           
           {/* SÉLECTEUR DE RÔLE */}
           {isSignUp && (
@@ -172,9 +188,32 @@ export default function Auth() {
                 </label>
                 <input 
                   type="text" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
                   placeholder="Amine Benali" 
                   className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
                 />
+              </div>
+            )}
+
+            {/* NUMÉRO DE TÉLÉPHONE (Uniquement à l'inscription) */}
+            {isSignUp && (
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                  Phone Number
+                </label>
+                <div className="relative">
+                  <input 
+                    type="tel" 
+                    value={phone}
+                    onChange={handlePhoneChange}
+                    required={isSignUp}
+                    placeholder="0550123456" 
+                    className="w-full px-4 pl-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                  />
+                  <Phone size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
               </div>
             )}
 
@@ -185,27 +224,32 @@ export default function Auth() {
               </label>
               <input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
                 placeholder="you@domain.com" 
                 className="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
               />
             </div>
 
-            {/* MOT DE PASSE AVEC TOGGLE ŒIL */}
+            {/* MOT DE PASSE */}
             <div className={`space-y-1 ${!isSignUp ? 'sm:col-span-2' : ''}`}>
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
                   Password
                 </label>
                 {!isSignUp && (
-                  <Link to="/forgot-password" 
-                  className="text-[10px] font-bold text-[#D96B40] hover:text-[#c85a30] transition-colors"
-                   > Forgot password?
+                  <Link to="/forgot-password" className="text-[10px] font-bold text-[#D96B40] hover:text-[#c85a30] transition-colors">
+                    Forgot password?
                   </Link>
                 )}
               </div>
               <div className="relative">
                 <input 
                   type={showPassword ? "text" : "password"} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
                   placeholder="••••••••" 
                   className="w-full px-4 pr-10 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
                 />
@@ -230,6 +274,7 @@ export default function Auth() {
                     <select 
                       value={selectedCountry}
                       onChange={(e) => setSelectedCountry(e.target.value)}
+                      required
                       className="w-full px-4 pl-9 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all appearance-none text-sm cursor-pointer"
                     >
                       <option value="" disabled>Select country</option>
@@ -240,9 +285,6 @@ export default function Auth() {
                       <option value="libya">Libya</option>
                     </select>
                     <Globe size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                    </div>
                   </div>
                 </div>
 
@@ -252,7 +294,9 @@ export default function Auth() {
                   </label>
                   <div className="relative">
                     <select 
-                      defaultValue="" 
+                      value={region}
+                      onChange={(e) => setRegion(e.target.value)}
+                      required
                       disabled={!selectedCountry}
                       className="w-full px-4 pl-9 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all appearance-none text-sm cursor-pointer disabled:bg-gray-50 disabled:text-gray-300 disabled:cursor-not-allowed"
                     >
@@ -264,22 +308,26 @@ export default function Auth() {
                       ))}
                     </select>
                     <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
-                    </div>
                   </div>
                 </div>
               </>
             )}
-
           </div>
 
-          {/* BOUTON DE SOUMISSION COULEUR TERRACOTTA */}
+          {/* AFFICHAGE DE L'ERREUR */}
+          {errorMessage && (
+            <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
+              {errorMessage}
+            </div>
+          )}
+
+          {/* BOUTON DE SOUMISSION */}
           <button 
             type="submit"
-            className="w-full mt-2 bg-[#D96B40] hover:bg-[#c85a30] text-white font-semibold py-3 rounded-xl shadow-lg shadow-[#D96B40]/20 transition-all active:scale-[0.99] text-sm tracking-wide"
+            disabled={loading}
+            className="w-full mt-2 bg-[#D96B40] hover:bg-[#c85a30] text-white font-semibold py-3 rounded-xl shadow-lg shadow-[#D96B40]/20 transition-all active:scale-[0.99] text-sm tracking-wide disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isSignUp ? 'Get Started Now' : 'Sign In to Account'}
+            {loading ? 'Processing...' : (isSignUp ? 'Get Started Now' : 'Sign In to Account')}
           </button>
 
         </form>
