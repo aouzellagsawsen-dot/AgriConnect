@@ -9,6 +9,13 @@ import Forgot from './Component/Auth/ForgotPassword';
 import Verify from './Component/Auth/VerifyEmail.jsx';
 import Reset from './Component/Auth/ResetPassword.jsx';
 
+import Dash from './Component/Dashboard/Farmer/Dashboard.jsx';
+import DashboardLayout from './Component/Dashboard/Farmer/DashboardLayout.jsx';
+
+import BDashLayout from './Component/Dashboard/Buyer/BuyerDashLayout.jsx';
+import BDash from './Component/Dashboard/Buyer/BuyerDashboard.jsx';
+
+
 import './App.css'
 
 function App() {
@@ -17,7 +24,7 @@ function App() {
   <div className="bg-[#F5F5F1] text-gray-900 dark:text-[#EAEAEA] min-h-screen flex flex-col transition-colors duration-500">
     <main className="grow w-full">
         <Routes>
-          <Route path="/*" element={
+          <Route path="/" element={
             <>
                 <div className="sticky top-0 z-50 bg-[#F7F4EB]/90 dark:bg-[#0B0C10]/90 backdrop-blur-md border-b border-[#D4AF37]/20 transition-colors duration-500">
                   <Header />
@@ -33,6 +40,14 @@ function App() {
           <Route path="/forgot-password" element={<Forgot />} />
           <Route path="/verify-email" element={<Verify />} />
           <Route path="/reset-password" element={<Reset />} />
+          <Route element={<DashboardLayout />}>
+            <Route path="/dash" element={<Dash />} />
+           
+           </Route>
+          <Route element={<BDashLayout />}>
+             <Route path="/Bdash" element={<BDash />} />
+            
+          </Route>
           
         </Routes>
       </main>

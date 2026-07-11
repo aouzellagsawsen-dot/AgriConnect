@@ -70,9 +70,19 @@ export default function Auth() {
       } else {
         const response = await axios.post(`${API_URL}/login`, { email, password });
         if (response.data.success) {
-          navigate('/dashboard');
-        }
-      }
+          const userRole = response.data.user.role;
+
+          // Redirection conditionnelle basée sur le rôle
+          if (userRole === 'farmer') {
+            navigate('/dash');
+          } else if (userRole === 'buyer') {
+            navigate('/Bdash');
+          } else if (userRole === 'transporter') {
+            navigate('/transporter-dashboard');
+          } else {
+            navigate('/');
+          }
+      }}
     } catch (error) {
       setErrorMessage(error.response?.data?.message || "An error occurred.");
     } finally {

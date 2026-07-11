@@ -51,8 +51,13 @@ export const login = async (req, res) => {
     if (!isPasswordValid) return res.status(400).json({ success: false, message: "invalid credentials" })
     
     generateTokenAndSetCookie(res, user._id)
+
+    await User.updateOne(
+      { _id: user._id }, 
+      { $set: { lastLogin: new Date() } }
+    );
+
     user.lastLogin = new Date();
-    await user.save()
     
     res.status(200).json({ success: true, message: "logged in successfully", user: { ...user._doc, password: undefined } })
   } catch (error) {
@@ -62,7 +67,9 @@ export const login = async (req, res) => {
 }
 
 export const logout = async (req, res) => {
-  res.clearCookie("token")
+  res.clearCookie("token", {
+    httpOnly: true
+  });
   res.status(200).json({ success: true, message: "logout successfully" })
 }
 

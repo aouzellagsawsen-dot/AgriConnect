@@ -5,6 +5,9 @@ import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
 import authRoutes from './Routes/auth.route.js';
+import dashboardRoutes from './Routes/dashboardRoutes.js';
+import productsRoutes from './Routes/product.route.js';
+import orderRoutes from './Routes/order.route.js';
 
 dotenv.config();
 
@@ -13,7 +16,9 @@ app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   credentials: true 
 }));
+
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 mongoose.connect(process.env.MONGO_URI)
@@ -21,6 +26,9 @@ mongoose.connect(process.env.MONGO_URI)
     .catch((err) => console.error('Échec de la connexion à MongoDB :', err));
 
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/products', productsRoutes);
+app.use('/api/orders', orderRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
