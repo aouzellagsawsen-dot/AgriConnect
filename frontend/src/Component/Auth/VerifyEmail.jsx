@@ -21,27 +21,25 @@ export default function VerifyEmail() {
 
   // Gestion de la saisie (passe à la case suivante automatiquement)
   const handleChange = (index, value) => {
-    // N'accepter que les chiffres
     if (!/^\d*$/.test(value)) return;
 
     const newCode = [...code];
-    newCode[index] = value.substring(value.length - 1); // Garder le dernier caractère tapé
+    newCode[index] = value.substring(value.length - 1);
     setCode(newCode);
 
-    // Focus automatique sur le champ suivant si un chiffre est entré
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
     }
   };
 
-  // Gestion de la touche "Effacer" (retourne à la case précédente)
+  // Gestion de la touche "Effacer"
   const handleKeyDown = (index, e) => {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       inputRefs.current[index - 1].focus();
     }
   };
 
-  // Gestion du collage (coller directement 6 chiffres)
+  // Gestion du collage
   const handlePaste = (e) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
@@ -53,7 +51,6 @@ export default function VerifyEmail() {
       }
       setCode(newCode);
       
-      // Focus sur la dernière case remplie
       const focusIndex = pastedData.length < 6 ? pastedData.length : 5;
       inputRefs.current[focusIndex].focus();
     }
@@ -72,7 +69,6 @@ export default function VerifyEmail() {
     setErrorMessage('');
 
     try {
-      // Envoi du code au backend selon le nom attendu (code)
       const response = await axios.post(
         'http://localhost:3000/api/auth/verify-email', 
         { code: verificationCode }, 
@@ -81,9 +77,21 @@ export default function VerifyEmail() {
 
       if (response.data.success) {
         setSuccessMessage("Email verified successfully! Redirecting...");
-        // Redirection vers le dashboard après 2 secondes
+        
+        // 1. Récupération du rôle de l'utilisateur (on utilise "?" pour éviter les crashs si non défini)
+        const userRole = response.data.user?.role;
+
+        // 2. Redirection conditionnelle après 2 secondes selon le rôle
         setTimeout(() => {
-          navigate('/dashboard');
+          if (userRole === 'farmer') {
+            navigate('/dash');
+          } else if (userRole === 'buyer') {
+            navigate('/Bdash');
+          } else if (userRole === 'transporter') {
+            navigate('/transporter-dashboard');
+          } else {
+            navigate('/'); // Redirection par défaut vers l'accueil
+          }
         }, 2000);
       }
     } catch (error) {
@@ -100,7 +108,7 @@ export default function VerifyEmail() {
       <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* BOUTON RETOUR VOLANT */}
+      {/* BOUTON RETOUR */}
       <Link 
         to="/auth" 
         className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-xl"
@@ -133,7 +141,6 @@ export default function VerifyEmail() {
 
         <form onSubmit={handleSubmit} className="space-y-6 relative z-20">
           
-          {/* LES 6 CASES DE SAISIE */}
           <div className="flex justify-between gap-2 sm:gap-3" onPaste={handlePaste}>
             {code.map((digit, index) => (
               <input
@@ -150,7 +157,6 @@ export default function VerifyEmail() {
             ))}
           </div>
 
-          {/* MESSAGES D'ERREUR OU DE SUCCÈS */}
           {errorMessage && (
             <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
               {errorMessage}
@@ -163,7 +169,6 @@ export default function VerifyEmail() {
             </div>
           )}
 
-          {/* BOUTON DE SOUMISSION */}
           <button 
             type="submit"
             disabled={loading || code.some((digit) => digit === '')}

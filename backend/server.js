@@ -8,6 +8,8 @@ import authRoutes from './Routes/auth.route.js';
 import dashboardRoutes from './Routes/dashboardRoutes.js';
 import productsRoutes from './Routes/product.route.js';
 import orderRoutes from './Routes/order.route.js';
+import buyerRoutes from './Routes/buyer.route.js';
+import buyerDashRoutes from './Routes/buyerDashboard.js';
 
 dotenv.config();
 
@@ -29,6 +31,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/products', productsRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/buyers', buyerRoutes);
+app.use('/api/buyers/dashboard', buyerDashRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

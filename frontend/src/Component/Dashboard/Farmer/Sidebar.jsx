@@ -3,8 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Wheat, ShoppingCart, Truck, 
-  TrendingUp, Wallet, MessageSquare, Settings, 
-  Headphones, LogOut, Menu, X, Sprout, 
+  TrendingUp, Wallet, LogOut, Menu, X, Sprout, 
   Leaf
 } from 'lucide-react';
 import axios from 'axios';
@@ -15,8 +14,8 @@ const menuGroups = [
     title: "Daily Management",
     items: [
       { id: 'home', label: 'Dashboard', icon: LayoutDashboard, path: '/dash' },
-      { id: 'stocks', label: 'My Inventory', icon: Wheat, path: '/inventory' },
-      { id: 'orders', label: 'My Orders', icon: ShoppingCart, path: '/orders' },
+      { id: 'stocks', label: 'My Inventory', icon: Wheat, path: '/my-inventory' },
+      { id: 'orders', label: 'My Orders', icon: ShoppingCart, path: '/farOrd' },
       { id: 'logistics', label: 'Logistics & Transport', icon: Truck, path: '/logistics' },
     ]
   },
@@ -25,14 +24,6 @@ const menuGroups = [
     items: [
       { id: 'market', label: 'Market & Pricing', icon: TrendingUp, path: '/market' },
       { id: 'revenue', label: 'My Revenue', icon: Wallet, path: '/revenue' },
-    ]
-  },
-  {
-    title: "Account & Tools",
-    items: [
-      { id: 'messages', label: 'Messages', icon: MessageSquare, badge: '3', path: '/messages' },
-      { id: 'settings', label: 'Settings', icon: Settings, path: '/settings' },
-      { id: 'support', label: 'Support / Help', icon: Headphones, path: '/support' },
     ]
   }
 ];
@@ -108,32 +99,34 @@ export default function Sidebar() {
 
       {/* --- USER PROFILE & LOGOUT --- */}
       <div className="p-4 md:p-6 border-t border-[#1A3619]/10">
-  <button onClick={handleLogout} 
-    className="w-full flex items-center gap-3 p-3 rounded-2xl text-[#1A3619]/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-300 group">
-    <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-    <span className="font-medium">Log Out</span>
-  </button>
-</div>
+        <button onClick={handleLogout} 
+          className="w-full flex items-center gap-3 p-3 rounded-2xl text-[#1A3619]/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-300 group">
+          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium">Log Out</span>
+        </button>
+      </div>
     </div>
   );
 
   const handleLogout = async () => {
-  try {
-    // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
-    const response = await axios.post('http://localhost:3000/api/auth/logout', {}, { 
-      withCredentials: true // Important pour que le navigateur supprime le cookie
-    });
+    try {
+      // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
+      const response = await axios.get('http://localhost:3000/api/auth/logout', {}, { 
+        withCredentials: true // Important pour que le navigateur supprime le cookie
+      });
 
-    if (response.data.success) {
-      
-       window.location.href = '/';
+      if (response.data.success) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+      localStorage.clear();
+      sessionStorage.clear();
+      window.location.href = '/';
     }
-  } catch (error) {
-    console.error("Erreur lors de la déconnexion :", error);
-    // Tu peux quand même rediriger l'utilisateur en cas d'erreur de serveur
-    navigate('/');
-  }
-};
+  };
 
   return (
     <>

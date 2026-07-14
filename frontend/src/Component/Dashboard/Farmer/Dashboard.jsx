@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, AlertCircle, ShoppingBag, 
   DollarSign, Package, Calendar, ArrowRight,
-  MoreVertical, Clock, Truck, Loader2, X, Edit3
+  MoreVertical, Clock, Truck, Loader2, X, Edit3, Trash2
 } from 'lucide-react';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
+
   // États pour stocker les données dynamiques
   const [farmerName, setFarmerName] = useState(""); 
   const [recentOrders, setRecentOrders] = useState([]);
@@ -66,7 +69,7 @@ export default function Dashboard() {
     setIsEditModalOpen(true);
   };
 
-  // Fonction pour mettre à jour les cartes KPI avec la bonne devise passée en paramètre
+  // Fonction pour mettre à jour les cartes KPI avec la bonne devise
   const updateKpiStats = (currentInventory, backendRevenue, pendingCount, currentCurrency = "DZD") => {
     const totalProductsCount = currentInventory.length;
 
@@ -136,7 +139,7 @@ export default function Dashboard() {
     }
   };
 
-  // 🚀 Mise à jour du statut d'une commande
+  // Mise à jour du statut d'une commande
   const handleOrderStatus = async (orderId, newStatus) => {
     try {
       const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
@@ -145,7 +148,6 @@ export default function Dashboard() {
       );
 
       if (response.data.success) {
-        // Mettre à jour l'état local pour que l'affichage change immédiatement
         setRecentOrders(recentOrders.map(order => 
           order._id === orderId ? { ...order, status: newStatus } : order
         ));
@@ -156,7 +158,7 @@ export default function Dashboard() {
     }
   };
 
-  // Envoi des modifications
+  // Envoi des modifications (Edit)
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -181,10 +183,34 @@ export default function Dashboard() {
     }
   };
 
-  // 🔄 RÉCUPÉRATION ET DÉTECTION DE LA RÉGION DEPUIS LA BDD (AVEC AUTO-REFRESH)
+  // 🗑️ NOUVEAU : Fonction pour supprimer un produit
+  const handleDeleteProduct = async (productId) => {
+    const isConfirmed = window.confirm("Are you sure you want to delete this product from the database?");
+    if (!isConfirmed) return;
+
+    try {
+      const response = await axios.delete(`http://localhost:3000/api/products/${productId}`, {
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        // Retirer le produit supprimé de l'affichage local
+        const updatedInventory = inventory.filter(prod => prod._id !== productId);
+        setInventory(updatedInventory);
+        
+        // Mettre à jour les statistiques
+        updateKpiStats(updatedInventory, stats[0]?.rawRevenue || 0, stats[1]?.rawValue || 0, currency);
+      }
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      alert("Erreur lors de la suppression du produit.");
+    }
+  };
+
+  // RÉCUPÉRATION DES DONNÉES
   useEffect(() => {
     const fetchDashboardData = async (isInitialLoad = false) => {
-      if (isInitialLoad) setIsLoading(true); // Écran de chargement seulement au début
+      if (isInitialLoad) setIsLoading(true); 
       try {
         const response = await axios.get('http://localhost:3000/api/dashboard', {
           withCredentials: true 
@@ -193,7 +219,7 @@ export default function Dashboard() {
         if (response.data.success) {
           const { farmerName, country, orders, inventory: dbInventory, stats: dbStats } = response.data.data;
           setFarmerName(farmerName);
-          setRecentOrders(orders); // Les nouvelles commandes s'ajouteront ici !
+          setRecentOrders(orders); 
           setInventory(dbInventory);
 
           let detectedCurrency = "Autre"; 
@@ -218,15 +244,8 @@ export default function Dashboard() {
       }
     };
 
-    // 1. Charger immédiatement au montage
     fetchDashboardData(true);
-
-    // 2. Vérifier les nouvelles commandes toutes les 10 secondes (10000 ms)
-    const intervalId = setInterval(() => {
-      fetchDashboardData(false);
-    }, 10000);
-
-    // 3. Nettoyer l'intervalle si l'utilisateur quitte la page
+    const intervalId = setInterval(() => { fetchDashboardData(false); }, 10000);
     return () => clearInterval(intervalId);
   }, []);
    
@@ -267,6 +286,7 @@ export default function Dashboard() {
           </motion.div>
 
           {/* KPI CARDS */}
+          {/* ... (Code des KPI reste identique) ... */}
           <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
             {stats.map((stat, idx) => {
               const Icon = stat.icon;
@@ -284,11 +304,12 @@ export default function Dashboard() {
           </motion.div>
 
           {/* RECENT ORDERS TABLE */}
-          <div className="w-full">
+         <div className="w-full">
             <motion.div variants={item} className="w-full bg-white rounded-[2rem] border border-[#1A3619]/10 shadow-sm p-6 lg:p-8">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-serif font-bold text-[#1A3619]">Recent Orders</h2>
-                <button className="text-sm font-semibold text-[#D96B40] hover:text-[#b55834] flex items-center gap-1">View All <ArrowRight className="w-4 h-4" /></button>
+                <button onClick={() => navigate('/farOrd')}
+                className="text-sm font-semibold text-[#D96B40] hover:text-[#b55834] flex items-center gap-1">View All <ArrowRight className="w-4 h-4" /></button>
               </div>
               <div className="overflow-x-auto">
                 {recentOrders.length === 0 ? (
@@ -308,21 +329,24 @@ export default function Dashboard() {
                       {recentOrders.map((order, idx) => (
                         <tr key={idx} className="border-b border-[#1A3619]/5 last:border-0 hover:bg-[#FAF9F4]/50 transition-colors">
                           <td className="py-4"><p className="font-bold text-[#1A3619] text-sm">{order.id}</p><p className="text-xs text-[#1A3619]/50 mt-0.5">{order.date}</p></td>
-                          <td className="py-4 text-sm font-medium text-[#1A3619]">{order.buyer}</td>
+                          <td className="py-4">
+                             <p className="text-sm font-medium text-[#1A3619]">{order.buyer}</p>
+                             <p className="text-xs text-[#1A3619]/60 max-w-[150px] truncate" title={order.deliveryAddress}> {order.deliveryAddress || "No address provided"}</p>
+                          </td>
                           <td className="py-4"><p className="text-sm text-[#1A3619] font-medium">{order.product}</p><p className="text-xs text-[#1A3619]/60">{order.total}</p></td>
                           <td className="py-4">{getStatusBadge(order.status)}</td>
                           <td className="py-4 text-right">
-  <select 
-    value={order.status}
-    onChange={(e) => handleOrderStatus(order._id, e.target.value)}
-    className="text-xs font-bold bg-white border border-[#1A3619]/20 text-[#1A3619] rounded-lg px-2 py-1.5 outline-none cursor-pointer hover:border-[#D96B40] transition-colors"
-  >
-    <option value="New">New</option>
-    <option value="Preparing">Preparing</option>
-    <option value="In Transit">In Transit</option>
-    <option value="Delivered">Delivered</option>
-  </select>
-</td>
+                            <select 
+                              value={order.status}
+                              onChange={(e) => handleOrderStatus(order._id, e.target.value)}
+                              className="text-xs font-bold bg-white border border-[#1A3619]/20 text-[#1A3619] rounded-lg px-2 py-1.5 outline-none cursor-pointer hover:border-[#D96B40] transition-colors"
+                            >
+                              <option value="New">New</option>
+                              <option value="Preparing">Preparing</option>
+                              <option value="In Transit">In Transit</option>
+                              <option value="Delivered">Delivered</option>
+                            </select>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -336,14 +360,19 @@ export default function Dashboard() {
           <motion.div variants={item}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-serif font-bold text-[#1A3619]">Quick Inventory</h2>
-              <button className="text-sm font-semibold text-[#1A3619] hover:text-[#D96B40]">Manage All Stocks</button>
+              <button 
+                onClick={() => navigate('/my-inventory')} 
+                className="text-sm font-semibold text-[#1A3619] hover:text-[#D96B40] transition-colors"
+              >
+                Manage All Stocks
+              </button>
             </div>
             
             {inventory.length === 0 ? (
               <div className="bg-white border border-[#1A3619]/10 rounded-[2rem] p-10 text-center"><Package className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-4" /><p className="text-[#1A3619]/60">Your inventory is empty.</p></div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {inventory.map((prod) => (
+                {inventory.slice(0, 3).map((prod) => (
                   <div key={prod._id} className="group bg-white border border-[#1A3619]/10 rounded-[2rem] overflow-hidden hover:border-[#D96B40]/40 transition-all duration-300">
                     <div className="relative h-40 overflow-hidden bg-gray-100">
                       <img src={prod.image === "default-image-url.jpg" ? "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop" : prod.image} alt={prod.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
@@ -360,7 +389,6 @@ export default function Dashboard() {
                         </div>
                         <div className="flex justify-between items-center text-sm">
                           <span className="text-[#1A3619]/60 flex items-center gap-1.5"><DollarSign className="w-4 h-4"/> Price</span>
-                          {/* 🪙 Monnaie dynamique appliquée ici */}
                           <span className="font-bold text-[#D96B40]">{prod.price.toString().toLowerCase().replace(new RegExp(currency.toLowerCase(), 'g'), '').trim()} {currency}</span>
                         </div>
                         <div className="flex justify-between items-center text-sm">
@@ -370,11 +398,14 @@ export default function Dashboard() {
                       </div>
                       
                       <div className="flex gap-2">
+                        {/* ✏️ Bouton Edit Conservé[cite: 39] */}
                         <button onClick={() => openEditModal(prod)} className="flex-1 py-2.5 bg-[#1A3619]/5 hover:bg-[#1A3619]/10 text-[#1A3619] rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1">
                           <Edit3 className="w-3.5 h-3.5" /> Edit
                         </button>
-                        <button onClick={() => openEditModal(prod)} className="flex-none px-4 py-2.5 bg-[#D96B40] hover:bg-[#c25a32] text-white rounded-xl text-sm font-semibold shadow-md transition-colors">
-                          + Update
+                        
+                        {/* 🗑️ NOUVEAU : Bouton Delete remplace le bouton Update[cite: 39] */}
+                        <button onClick={() => handleDeleteProduct(prod._id)} className="flex-none px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1 border border-red-100">
+                          <Trash2 className="w-3.5 h-3.5" /> Delete
                         </button>
                       </div>
                     </div>
@@ -387,6 +418,7 @@ export default function Dashboard() {
       </main>
 
       {/* === MODAL 1 : ADD NEW HARVEST === */}
+      {/* ... (Le code du Modal 1 reste identique) ... */}
       <AnimatePresence>
         {isModalOpen && (
           <>
@@ -444,6 +476,7 @@ export default function Dashboard() {
       </AnimatePresence>
 
       {/* === MODAL 2 : EDIT / UPDATE EXISTING PRODUCT === */}
+      {/* ... (Le code du Modal 2 reste identique) ... */}
       <AnimatePresence>
         {isEditModalOpen && (
           <>
@@ -486,7 +519,6 @@ export default function Dashboard() {
                       <input type="text" name="qty" required value={editingProduct.qty} onChange={handleEditInputChange} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-[#1A3619] font-bold outline-none"/>
                     </div>
                     <div className="space-y-1">
-                      {/* 🪙 Label dynamique avec la devise détectée */}
                       <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">Price (per kg in {currency})</label>
                       <input type="text" name="price" required value={editingProduct.price} onChange={handleEditInputChange} className="w-full px-4 py-2.5 rounded-xl border border-gray-200 text-sm text-[#D96B40] font-bold outline-none"/>
                     </div>

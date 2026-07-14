@@ -14,7 +14,8 @@ export default function Auth() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [phone, setPhone] = useState(''); // Nouvel état pour le téléphone
+  const [phone, setPhone] = useState(''); 
+  const [address, setAddress] = useState('');
   const [region, setRegion] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,7 +59,8 @@ export default function Auth() {
           name,
           email,
           password,
-          phone, // Ajout du téléphone dans l'envoi
+          phone, 
+          address,
           role,
           country: selectedCountry,
           region
@@ -68,7 +70,8 @@ export default function Auth() {
           navigate('/verify-email'); 
         }
       } else {
-        const response = await axios.post(`${API_URL}/login`, { email, password });
+        const response = await axios.post(`${API_URL}/login`, { email, password }, {
+        withCredentials: true });
         if (response.data.success) {
           const userRole = response.data.user.role;
 
@@ -321,6 +324,25 @@ export default function Auth() {
                   </div>
                 </div>
               </>
+            )}
+            {/* ADRESSE EXACTE (Uniquement à l'inscription) */}
+            {isSignUp && (
+              <div className="space-y-1 sm:col-span-2">
+                <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+                  Full Delivery Address
+                </label>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    required={isSignUp}
+                    placeholder="123 Rue de la Liberté, Bâtiment A, Étage 2..." 
+                    className="w-full px-4 pl-9 py-2.5 rounded-xl border border-gray-200 bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 focus:border-[#1A3619] transition-all text-sm placeholder:text-gray-300"
+                  />
+                  <MapPin size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                </div>
+              </div>
             )}
           </div>
 

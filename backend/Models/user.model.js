@@ -31,6 +31,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
+    address: { 
+        type: String, 
+        required: false 
+    },
+    favoriteFarmers: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }],
     lastLogin:{
         type:Date,
         default:Date.now

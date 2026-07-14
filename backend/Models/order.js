@@ -2,9 +2,14 @@ import mongoose from 'mongoose';
 
 const orderSchema = new mongoose.Schema({
   farmerId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  buyerId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'User' },
+  productId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: 'Product' },
+  quantity: { type: Number, required: true },
   orderNumber: { type: String, required: true, unique: true }, 
   buyerName: { type: String, required: true },
+  deliveryAddress: { type: String, required: true },
   productName: { type: String, required: true }, 
+  category: { type: String, required: true },
   totalAmount: { type: Number, required: true }, 
   formattedTotal: { type: String, required: true }, 
   status: { 
@@ -15,4 +20,4 @@ const orderSchema = new mongoose.Schema({
   date: { type: String, required: true } 
 }, { timestamps: true });
 
-export default mongoose.model('Order', orderSchema);
+export default mongoose.models.Order || mongoose.model('Order', orderSchema);

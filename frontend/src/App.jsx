@@ -11,9 +11,16 @@ import Reset from './Component/Auth/ResetPassword.jsx';
 
 import Dash from './Component/Dashboard/Farmer/Dashboard.jsx';
 import DashboardLayout from './Component/Dashboard/Farmer/DashboardLayout.jsx';
+import Inv from './Component/Dashboard/Farmer/MyInventory.jsx';
+import FarOrd from './Component/Dashboard/Farmer/FarmerOrders.jsx';
 
 import BDashLayout from './Component/Dashboard/Buyer/BuyerDashLayout.jsx';
 import BDash from './Component/Dashboard/Buyer/BuyerDashboard.jsx';
+import BFav from './Component/Dashboard/Buyer/BuyerFavorites.jsx';
+import MPlace from './Component/Dashboard/Buyer/MarketPlace.jsx';
+import Order from './Component/Dashboard/Buyer/MyOrders.jsx';
+
+
 
 
 import './App.css'
@@ -42,10 +49,17 @@ function App() {
           <Route path="/reset-password" element={<Reset />} />
           <Route element={<DashboardLayout />}>
             <Route path="/dash" element={<Dash />} />
+            <Route path="/my-inventory" element={<Inv />} />
+            <Route path="/farOrd" element={<FarOrd />} />
            
            </Route>
           <Route element={<BDashLayout />}>
              <Route path="/Bdash" element={<BDash />} />
+             <Route path="/Bfav" element={<BFav />} />
+             <Route path="/Mplace" element={<MPlace />} />
+             <Route path="/Order" element={<Order />} />
+          
+            
             
           </Route>
           

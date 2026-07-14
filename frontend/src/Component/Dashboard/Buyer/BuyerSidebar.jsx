@@ -6,33 +6,23 @@ import {
   Store, 
   ShoppingBag, 
   Heart, 
-  MessageSquare, 
-  Settings, 
-  Headphones, 
   LogOut, 
   Menu, 
   X, 
-  Sprout 
+  Sprout, 
+  Leaf
 } from 'lucide-react';
 import axios from 'axios';
 
 // 1. BUYER MENU GROUPS AND PATHS
 const menuGroups = [
   {
-    title: "Market & Shopping",
+    title: "Market / Shopping",
     items: [
       { id: 'home', label: 'Dashboard', icon: LayoutDashboard, path: '/Bdash' },
-      { id: 'market', label: 'Local Market', icon: Store, path: '/buyer/market' },
-      { id: 'orders', label: 'My Orders', icon: ShoppingBag, path: '/buyer/orders' },
-      { id: 'favorites', label: 'Favorite Farmers', icon: Heart, path: '/buyer/favorites' },
-    ]
-  },
-  {
-    title: "Account & Tools",
-    items: [
-      { id: 'messages', label: 'Messages', icon: MessageSquare, badge: '2', path: '/buyer/messages' },
-      { id: 'settings', label: 'Settings', icon: Settings, path: '/buyer/settings' },
-      { id: 'support', label: 'Support / Help', icon: Headphones, path: '/buyer/support' },
+      { id: 'market', label: 'Local Market', icon: Store, path: '/Mplace' },
+      { id: 'orders', label: 'My Orders', icon: ShoppingBag, path: '/Order' },
+      { id: 'favorites', label: 'Favorite Farmers', icon: Heart, path: '/Bfav' },
     ]
   }
 ];
@@ -51,7 +41,7 @@ export default function BuyerSidebar() {
       {/* --- LOGO AREA --- */}
       <div className="p-6 md:p-8 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A3619] to-[#3d5a2a] flex items-center justify-center shadow-lg shadow-[#1A3619]/20">
-          <Sprout className="w-6 h-6 text-white" />
+          <Leaf className="w-6 h-6 text-white" />
         </div>
         <span className="font-serif text-2xl font-bold text-[#1A3619] tracking-tight">
           Agri<span className="text-[#D96B40] italic">Connect</span>
@@ -108,32 +98,35 @@ export default function BuyerSidebar() {
 
       {/* --- USER PROFILE & LOGOUT --- */}
       <div className="p-4 md:p-6 border-t border-[#1A3619]/10">
-  <button onClick={handleLogout} 
-    className="w-full flex items-center gap-3 p-3 rounded-2xl text-[#1A3619]/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-300 group">
-    <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-    <span className="font-medium">Log Out</span>
-  </button>
-</div>
+        <button onClick={handleLogout} 
+          className="w-full flex items-center gap-3 p-3 rounded-2xl text-[#1A3619]/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-300 group">
+          <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium">Log Out</span>
+        </button>
+      </div>
     </div>
   );
 
   const handleLogout = async () => {
-  try {
-    // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
-    const response = await axios.post('http://localhost:3000/api/auth/logout', {}, { 
-      withCredentials: true // Important pour que le navigateur supprime le cookie
-    });
+    try {
+      // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
+      const response = await axios.get('http://localhost:3000/api/auth/logout', { 
+        withCredentials: true // Important pour que le navigateur supprime le cookie
+      });
 
-    if (response.data.success) {
-        
+      if (response.data.success) {
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.href = '/';
+      }
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+      // Tu peux quand même rediriger l'utilisateur en cas d'erreur de serveur
+      localStorage.clear();
+      sessionStorage.clear();
       window.location.href = '/';
     }
-  } catch (error) {
-    console.error("Erreur lors de la déconnexion :", error);
-    // Tu peux quand même rediriger l'utilisateur en cas d'erreur de serveur
-    navigate('/');
-  }
-};
+  };
 
   return (
     <>
@@ -141,7 +134,7 @@ export default function BuyerSidebar() {
       <div className="lg:hidden fixed top-0 left-0 w-full bg-[#FAF9F4] border-b border-[#1A3619]/10 z-40 p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-[#1A3619] flex items-center justify-center">
-            <Sprout className="w-5 h-5 text-white" />
+            <Leaf className="w-5 h-5 text-white" />
           </div>
           <span className="font-serif text-xl font-bold text-[#1A3619]">
             Agri<span className="text-[#D96B40] italic">Connect</span>
