@@ -2,40 +2,38 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  LayoutDashboard, Wheat, ShoppingCart, Truck, 
-  TrendingUp, Wallet, LogOut, Menu, X, Sprout, 
+  LayoutDashboard, 
+  Search, 
+  Truck, 
+  Map, 
+  LogOut, 
+  Menu, 
+  X, 
   Leaf
 } from 'lucide-react';
 import axios from 'axios';
 
-// 1. AJOUT DES CHEMINS (paths) POUR CHAQUE BOUTON
+// 1. GROUPS DE MENUS POUR LE TRANSPORTEUR
 const menuGroups = [
   {
-    title: "Daily Management",
+    title: "Logistics & Transport",
     items: [
-      { id: 'home', label: 'Dashboard', icon: LayoutDashboard, path: '/dash' },
-      { id: 'stocks', label: 'My Inventory', icon: Wheat, path: '/my-inventory' },
-      { id: 'orders', label: 'My Orders', icon: ShoppingCart, path: '/farOrd' },
-      { id: 'logistics', label: 'Logistics & Transport', icon: Truck, path: '/logistics' },
-    ]
-  },
-  {
-    title: "Analysis & Strategy",
-    items: [
-      { id: 'market', label: 'Market & Pricing', icon: TrendingUp, path: '/market' },
-      { id: 'revenue', label: 'My Revenue', icon: Wallet, path: '/revenue' },
+      { id: 'home', label: 'Dashboard', icon: LayoutDashboard, path: '/Tdash' },
+      { id: 'offers', label: 'Available Shipments', icon: Search, path: '/Toffers' }, // Recherche de charges (Fermier -> Acheteur)
+      { id: 'deliveries', label: 'My Deliveries', icon: Truck, path: '/Tdeliveries' }, // Commandes acceptées / En transit
+      { id: 'map', label: 'Routing Map', icon: Map, path: '/Tmap' }, // Intégration Google Maps / Mapbox
     ]
   }
 ];
 
-export default function Sidebar() {
+export default function TransporterSidebar() {
   const [activeItem, setActiveItem] = useState('home');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   // Initialisation du hook de navigation
   const navigate = useNavigate();
 
-  // Navigation content (reused for both Desktop and Mobile)
+  // Navigation content (Réutilisé pour Desktop et Mobile)
   const NavContent = () => (
     <div className="flex flex-col h-full bg-[#FAF9F4] border-r border-[#1A3619]/10">
       
@@ -67,7 +65,7 @@ export default function Sidebar() {
                     onClick={() => {
                       setActiveItem(item.id);     // Met à jour l'état visuel actif
                       setIsMobileOpen(false);     // Ferme le menu sur mobile
-                      navigate(item.path);        // 2. REDIRECTION VERS LA BONNE PAGE
+                      navigate(item.path);        // Redirection vers l'espace transporteur
                     }}
                     whileHover={{ x: isActive ? 0 : 4 }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 ${
@@ -81,7 +79,7 @@ export default function Sidebar() {
                       <span className="font-medium text-sm md:text-base">{item.label}</span>
                     </div>
                     
-                    {/* Notification Badge */}
+                    {/* Notification Badge si nécessaire (ex: nouvelles offres dispo) */}
                     {item.badge && (
                       <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                         isActive ? 'bg-[#D96B40] text-white' : 'bg-[#D96B40]/10 text-[#D96B40]'
@@ -110,9 +108,8 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
       const response = await axios.get('http://localhost:3000/api/auth/logout', { 
-        withCredentials: true // Important pour que le navigateur supprime le cookie
+        withCredentials: true 
       });
 
       if (response.data.success) {
@@ -166,7 +163,7 @@ export default function Sidebar() {
               className="fixed inset-0 bg-[#1A3619]/60 backdrop-blur-sm z-50 lg:hidden"
             />
 
-            {/* Mobile Sidebar */}
+            {/* Mobile Sidebar Drawer */}
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}

@@ -88,7 +88,7 @@ export default function VerifyEmail() {
           } else if (userRole === 'buyer') {
             navigate('/Bdash');
           } else if (userRole === 'transporter') {
-            navigate('/transporter-dashboard');
+            navigate('/Tdash');
           } else {
             navigate('/'); // Redirection par défaut vers l'accueil
           }

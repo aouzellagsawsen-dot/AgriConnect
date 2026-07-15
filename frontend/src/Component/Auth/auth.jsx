@@ -81,7 +81,7 @@ export default function Auth() {
           } else if (userRole === 'buyer') {
             navigate('/Bdash');
           } else if (userRole === 'transporter') {
-            navigate('/transporter-dashboard');
+            navigate('/Tdash');
           } else {
             navigate('/');
           }

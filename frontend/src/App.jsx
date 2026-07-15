@@ -20,6 +20,13 @@ import BFav from './Component/Dashboard/Buyer/BuyerFavorites.jsx';
 import MPlace from './Component/Dashboard/Buyer/MarketPlace.jsx';
 import Order from './Component/Dashboard/Buyer/MyOrders.jsx';
 
+import TDashLayout from './Component/Dashboard/Transporter/TransporterDashLayout.jsx';
+import TDash from './Component/Dashboard/Transporter/TransporterDashboard.jsx';
+import TOffers from './Component/Dashboard/Transporter/AvailableOffers.jsx';
+import TDeliveries from './Component/Dashboard/Transporter/MyDeliveries.jsx';
+import TMap from './Component/Dashboard/Transporter/RoutingMap.jsx';
+
+
 
 
 
@@ -53,6 +60,14 @@ function App() {
             <Route path="/farOrd" element={<FarOrd />} />
            
            </Route>
+          <Route element={<TDashLayout />}>
+             <Route path="/Tdash" element={<TDash />} />
+             <Route path="/Toffers" element={<TOffers />} />
+             <Route path="/Tdeliveries" element={<TDeliveries />} />
+             <Route path="/Tmap" element={<TMap />} />
+          
+            
+          </Route>
           <Route element={<BDashLayout />}>
              <Route path="/Bdash" element={<BDash />} />
              <Route path="/Bfav" element={<BFav />} />

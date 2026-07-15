@@ -12,6 +12,9 @@ const orderSchema = new mongoose.Schema({
   category: { type: String, required: true },
   totalAmount: { type: Number, required: true }, 
   formattedTotal: { type: String, required: true }, 
+  transporterId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null }, 
+  deliveryFee: { type: Number, default: 0 }, 
+  distanceKm: { type: Number, default: 0 },
   status: { 
     type: String, 
     enum: ['New', 'Preparing', 'In Transit', 'Delivered', 'Cancelled'],
