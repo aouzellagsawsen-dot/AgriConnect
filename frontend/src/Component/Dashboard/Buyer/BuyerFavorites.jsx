@@ -121,8 +121,15 @@ export default function BuyerFavorites() {
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
           
           <div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">Favorite Farmers</h1>
-            <p className="mt-2 text-[#1A3619]/60 font-medium">Your curated list of trusted local suppliers.</p>
+          <motion.div variants={item} className="border-b border-[#1A3619]/10 pb-6">
+ <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+    <span className="block font-medium text-[#1A3619]/80">Passionate hands,</span>
+    <span className="block font-bold text-[#D96B40]">your favorite growers! </span>
+  </h1>
+  <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+    The passionate hands and sunny fields you love supporting the most.
+  </p>
+</motion.div>
           </div>
 
           {favorites.length === 0 ? (
@@ -142,7 +149,7 @@ export default function BuyerFavorites() {
                     variants={item} 
                     exit={{ opacity: 0, scale: 0.9 }}
                     key={farmer._id} 
-                    className="bg-white rounded-[2rem] border border-[#1A3619]/10 p-6 hover:shadow-lg transition-all group relative flex flex-col justify-between"
+                    className="bg-[#F6F1E7]  rounded-[2rem] border border-[#1A3619]/10 p-6 hover:shadow-lg transition-all group relative flex flex-col justify-between"
                   >
                     {/* Remove from favorites */}
                     <button 

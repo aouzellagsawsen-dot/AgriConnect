@@ -6,13 +6,13 @@ import { Home } from './Component/HomePage/Home.jsx';
 import About from './Component/about.jsx';
 import Auth from './Component/Auth/auth.jsx';
 import Forgot from './Component/Auth/ForgotPassword';
-import Verify from './Component/Auth/VerifyEmail.jsx';
 import Reset from './Component/Auth/ResetPassword.jsx';
 
 import Dash from './Component/Dashboard/Farmer/Dashboard.jsx';
 import DashboardLayout from './Component/Dashboard/Farmer/DashboardLayout.jsx';
 import Inv from './Component/Dashboard/Farmer/MyInventory.jsx';
 import FarOrd from './Component/Dashboard/Farmer/FarmerOrders.jsx';
+import TOrd from './Component/Dashboard/Farmer/TransOrder.jsx';
 
 import BDashLayout from './Component/Dashboard/Buyer/BuyerDashLayout.jsx';
 import BDash from './Component/Dashboard/Buyer/BuyerDashboard.jsx';
@@ -52,12 +52,13 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/forgot-password" element={<Forgot />} />
-          <Route path="/verify-email" element={<Verify />} />
           <Route path="/reset-password" element={<Reset />} />
           <Route element={<DashboardLayout />}>
             <Route path="/dash" element={<Dash />} />
             <Route path="/my-inventory" element={<Inv />} />
             <Route path="/farOrd" element={<FarOrd />} />
+            <Route path="/Tord" element={<TOrd />} />
+            
            
            </Route>
           <Route element={<TDashLayout />}>

@@ -3,9 +3,8 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { 
   AlertCircle, Package, Clock, Truck, 
-  MapPin, Search, ArrowLeft, Loader2
+  MapPin, Search, Loader2
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 export default function FarmerOrders() {
   const [orders, setOrders] = useState([]);
@@ -35,7 +34,7 @@ export default function FarmerOrders() {
   const handleOrderStatus = async (orderId, newStatus) => {
     // Si on accepte la commande, on prévient l'utilisateur que le stock va baisser
     if (newStatus === 'Preparing') {
-      const confirm = window.confirm("En acceptant cette commande, la quantité commandée sera automatiquement déduite de votre stock. Continuer ?");
+      const confirm = window.confirm("By accepting this order, the requested quantity will be automatically deducted from your inventory. Continue?");
       if (!confirm) return;
     }
 
@@ -51,17 +50,7 @@ export default function FarmerOrders() {
         ));
       }
     } catch (error) {
-      alert("Erreur lors de la mise à jour du statut.");
-    }
-  };
-
-  const getStatusBadge = (status) => {
-    switch(status) {
-      case 'New': return <span className="flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#D96B40]/10 text-[#D96B40]"><AlertCircle className="w-3.5 h-3.5"/> {status}</span>;
-      case 'Preparing': return <span className="flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700"><Clock className="w-3.5 h-3.5"/> {status}</span>;
-      case 'In Transit': return <span className="flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-700"><Truck className="w-3.5 h-3.5"/> {status}</span>;
-      case 'Delivered': return <span className="flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#1A3619]/10 text-[#1A3619]"><Package className="w-3.5 h-3.5"/> {status}</span>;
-      default: return <span className="flex w-fit items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-gray-100 text-gray-600">{status}</span>;
+      alert("Error updating order status.");
     }
   };
 
@@ -72,7 +61,7 @@ export default function FarmerOrders() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex flex-col items-center justify-center">
+      <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] flex flex-col items-center justify-center">
         <Loader2 className="w-12 h-12 text-[#1A3619] animate-spin mb-4" />
         <p className="text-[#1A3619]/60 font-medium">Loading orders...</p>
       </div>
@@ -84,31 +73,36 @@ export default function FarmerOrders() {
       <div className="max-w-7xl mx-auto space-y-8">
         
         {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">
-              Order Management
-            </h1>
-          </div>
-          
-          <div className="relative">
-            <input 
-              type="text" 
-              placeholder="Search by buyer or ID..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 pr-4 py-2.5 rounded-xl border border-[#1A3619]/20 bg-white text-sm focus:outline-none focus:border-[#D96B40] transition-colors w-full md:w-64"
-            />
-            <Search className="w-4 h-4 text-[#1A3619]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          </div>
-        </div>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#1A3619]/10 pb-6">
+  <div>
+    <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+      <span className="block font-medium text-[#1A3619]/80">From soil to table,</span>
+      <span className="block font-bold text-[#D96B40]">your order journal! </span>
+    </h1>
+    <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+      Follow every fresh basket’s journey from your soil to your neighbors' tables.
+    </p>
+  </div>
+  
+  {/* Search Bar */}
+  <div className="relative w-full md:w-auto">
+    <input 
+      type="text" 
+      placeholder="Search by buyer or ID..." 
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="pl-10 pr-4 py-2.5 rounded-xl border border-[#1A3619]/20 bg-white text-[#1A3619] text-sm focus:outline-none focus:border-[#D96B40] transition-colors w-full md:w-64"
+    />
+    <Search className="w-4 h-4 text-[#1A3619]/40 absolute left-3.5 top-1/2 -translate-y-1/2" />
+  </div>
+</div>
 
-        {/* LISTE DES COMMANDES */}
+        {/* ORDERS LIST */}
         <div className="grid gap-4">
           {filteredOrders.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-2xl border border-[#1A3619]/10">
+            <div className="text-center py-12 bg-[#F6F1E7]/40 rounded-2xl border border-[#1A3619]/10">
               <Package className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-4" />
-              <p className="text-[#1A3619]/60">No orders found.</p>
+              <p className="text-[#1A3619]/60 font-medium">No orders found.</p>
             </div>
           ) : (
             filteredOrders.map((order) => (
@@ -116,12 +110,12 @@ export default function FarmerOrders() {
                 key={order._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white p-6 rounded-[1.5rem] border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row gap-6 justify-between"
+                className="bg-[#F6F1E7]/50 p-6 rounded-[2rem] border border-[#1A3619]/10 shadow-sm flex flex-col xl:flex-row gap-6 justify-between items-start xl:items-center"
               >
-                {/* Infos principales */}
-                <div className="space-y-3 flex-1">
+                {/* Left Column: Order Number, Date & Product */}
+                <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold bg-gray-100 px-2 py-1 rounded-md text-gray-600">
+                    <span className="font-mono text-xs font-bold bg-[#1A3619]/5 px-2.5 py-1 rounded-md text-[#1A3619]/70">
                       {order.orderNumber}
                     </span>
                     <span className="text-xs text-[#1A3619]/50 font-medium">{order.date}</span>
@@ -130,13 +124,13 @@ export default function FarmerOrders() {
                   <div>
                     <h3 className="text-lg font-bold text-[#1A3619]">{order.productName}</h3>
                     <p className="text-[#D96B40] font-semibold text-sm">
-                      {order.quantity} Kg • {order.formattedTotal}
+                      {order.quantity} Kg · {order.formattedTotal}
                     </p>
                   </div>
                 </div>
 
-                {/* Infos Acheteur & Adresse */}
-                <div className="flex-1 bg-gray-50/50 p-4 rounded-xl border border-gray-100">
+                {/* Middle Column: Buyer & Address Card with high contrast */}
+                <div className="flex-1 w-full bg-white/80 p-4 rounded-2xl border border-[#1A3619]/5">
                   <p className="text-sm font-bold text-[#1A3619] mb-1">Buyer: {order.buyerName}</p>
                   <div className="flex items-start gap-1.5 text-xs text-[#1A3619]/70">
                     <MapPin className="w-4 h-4 shrink-0 text-[#D96B40] mt-0.5" />
@@ -144,25 +138,35 @@ export default function FarmerOrders() {
                   </div>
                 </div>
 
-                {/* Statut & Action */}
-                <div className="flex flex-col items-end justify-between gap-4 md:w-48">
-                  {getStatusBadge(order.status)}
-                  
-                  <div className="w-full">
-                    <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-1 block">
-                      Update Status
-                    </label>
-                    <select 
-                      value={order.status}
-                      onChange={(e) => handleOrderStatus(order._id, e.target.value)}
-                      className="w-full text-sm font-bold bg-white border border-[#1A3619]/20 text-[#1A3619] rounded-xl px-3 py-2 outline-none cursor-pointer hover:border-[#D96B40] focus:ring-2 focus:ring-[#D96B40]/20 transition-all"
-                    >
-                      <option value="New">New</option>
-                      <option value="Preparing">Preparing (Accept)</option>
-                      <option value="In Transit">In Transit</option>
-                      <option value="Delivered">Delivered</option>
-                      <option value="Cancelled">Cancelled (Refuse)</option>
-                    </select>
+                {/* Right Column: Clickable Horizontal Buttons */}
+                <div className="flex flex-col xl:items-end gap-2 w-full xl:w-auto shrink-0">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 block">
+                    Update Status
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['New', 'Preparing', 'In Transit', 'Delivered'].map(status => {
+                      const isActive = order.status === status;
+                      
+                      let activeStyle = "";
+                      if (status === 'New') activeStyle = "bg-[#D96B40] text-white shadow-sm ring-1 ring-[#D96B40]/25";
+                      if (status === 'Preparing') activeStyle = "bg-amber-500 text-white shadow-sm ring-1 ring-amber-500/25";
+                      if (status === 'In Transit') activeStyle = "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600/25";
+                      if (status === 'Delivered') activeStyle = "bg-[#345E37] text-white shadow-sm ring-1 ring-[#345E37]/25";
+
+                      return (
+                        <button
+                          key={status}
+                          onClick={() => handleOrderStatus(order._id, status)}
+                          className={`px-3 py-1.5 text-[10px] font-bold rounded-full transition-all duration-200 ${
+                            isActive 
+                              ? activeStyle 
+                              : "bg-white text-[#1A3619]/50 hover:bg-[#1A3619]/5 hover:text-[#1A3619] border border-[#1A3619]/10 shadow-sm"
+                          }`}
+                        >
+                          {status}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </motion.div>

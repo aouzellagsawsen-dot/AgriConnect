@@ -60,10 +60,17 @@ export default function AvailableOffers() {
   return (
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-serif font-bold text-[#1A3619]">Available Shipments</h1>
-          <p className="text-[#1A3619]/60 mt-1">Find ready-to-ship cargo and earn money.</p> 
-        </div>
+        
+        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
+       <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
+  <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+    <span className="block font-medium text-[#1A3619]/80">Ready to hit the road?</span>
+    <span className="block font-bold text-[#D96B40]">Find your next shipment! </span>
+  </h1>
+  <p className="text-[#1A3619]/60 mt-3 font-medium text-sm">
+    Browse available cargo, pick the best routes, and increase your daily earnings.
+  </p> 
+</div>
 
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-800 rounded-2xl p-4 flex items-center gap-3">
@@ -73,7 +80,7 @@ export default function AvailableOffers() {
         )}
 
         {offers.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-[#1A3619]/10">
+          <div className="text-center py-16 bg-[#F6F1E7]  rounded-3xl border border-[#1A3619]/10">
             <Search className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-3" />
             <p className="text-[#1A3619]/60 font-semibold text-lg">No deliveries currently available</p> 
             <p className="text-[#1A3619]/40 text-sm mt-1">Come back a little later or refresh the page!</p> 
@@ -88,11 +95,11 @@ export default function AvailableOffers() {
                 key={offer._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6"
+                className="bg-[#F6F1E7]  p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6"
               >
                 <div className="space-y-4 flex-1">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
+                    <span className="font-mono text-xs font-bold bg-[#1A3619]/5 px-2.5 py-1 rounded-md text-gray-600">
                       {offer.orderNumber}
                     </span>
                     <span className="text-xs text-[#D96B40] font-bold flex items-center gap-1">
@@ -105,27 +112,27 @@ export default function AvailableOffers() {
                     <p className="text-xs text-[#1A3619]/60">Farmer: {offer.farmerId?.name || "Anonymous Farmer"}</p> 
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[#1A3619]/5">
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-[#1A3619] shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Pickup Location</p> 
+                        <p className="text-[10px] font-bold text-[#1A3619]/50 uppercase">Pickup Location</p> 
                         <p className="text-xs font-medium text-[#1A3619]">{offer.farmerId?.region || "Farm"}</p> 
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-[#D96B40] shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Delivery Location</p> 
+                        <p className="text-[10px] font-bold text-[#1A3619]/50 uppercase">Delivery Location</p> 
                         <p className="text-xs font-medium text-[#1A3619]">{offer.deliveryAddress}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-gray-100 md:pl-6 pt-4 md:pt-0">
+                <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-[#1A3619]/5 md:pl-6 pt-4 md:pt-0">
                   <div className="text-right w-full">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Delivery Fee</span> 
+                    <span className="text-[10px] font-bold text-[#1A3619]/50 uppercase">Delivery Fee</span> 
                     <p className="text-2xl font-serif font-bold text-[#1A3619]">
                       {offer.deliveryFee ? `${offer.deliveryFee.toLocaleString()} DZD` : "Calculated at departure"} 
                     </p>

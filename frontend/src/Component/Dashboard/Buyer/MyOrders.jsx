@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Loader2, ArrowLeft, Package, Clock, Truck, CheckCircle, XCircle, AlertCircle 
+  Loader2, Package, Clock, Truck, CheckCircle, XCircle, AlertCircle, User, Phone 
 } from 'lucide-react';
 import axios from 'axios';
 
@@ -19,7 +19,6 @@ export default function MyOrders() {
   const fetchOrders = async () => {
     setIsLoading(true);
     try {
-      // Appel à la route backend pour récupérer les commandes de l'acheteur
       const res = await axios.get('http://localhost:3000/api/orders/my-orders', { 
         withCredentials: true 
       });
@@ -38,13 +37,11 @@ export default function MyOrders() {
     if (!window.confirm("Êtes-vous sûr de vouloir annuler cette commande ?")) return;
 
     try {
-      // Appel à la route d'annulation du backend
       const res = await axios.put(`http://localhost:3000/api/orders/${orderId}/cancel`, {}, { 
         withCredentials: true 
       });
       
       if (res.data.success) {
-        // Mise à jour de l'état local pour refléter l'annulation immédiatement
         setOrders(orders.map(order => 
           order._id === orderId ? { ...order, status: 'Cancelled' } : order
         ));
@@ -55,11 +52,9 @@ export default function MyOrders() {
     }
   };
 
-  // Configuration des animations Framer Motion
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
 
-  // Fonction pour styliser dynamiquement le statut
   const getStatusDisplay = (status) => {
     switch(status) {
       case 'New': 
@@ -77,7 +72,6 @@ export default function MyOrders() {
     }
   };
 
-  // Affichage pendant le chargement
   if (isLoading) return (
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex flex-col items-center justify-center">
       <Loader2 className="w-12 h-12 text-[#1A3619] animate-spin mb-4" />
@@ -91,18 +85,19 @@ export default function MyOrders() {
       <main className="p-6 lg:p-10 max-w-5xl mx-auto">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-6">
           
-          {/* En-tête de la page */}
           <motion.div variants={item} className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-[#1A3619]/10 pb-6">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">
-                  My Orders
-                </h1>
-              </div>
-             </div>
-          </motion.div>
+  <div>
+    {/* Titre et sous-titre plus humains et engageants */}
+    <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+      <span className="block font-medium text-[#1A3619]/80">From sunny fields,</span>
+      <span className="block font-bold text-[#D96B40]">track your harvests! </span>
+    </h1>
+    <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+      Follow your farm-fresh choices from the sunny fields directly to your kitchen.
+    </p>
+  </div>
+</motion.div>
 
-          {/* Gestion des erreurs */}
           {error && (
             <motion.div variants={item} className="bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 flex items-center gap-3">
               <AlertCircle className="w-5 h-5 shrink-0" />
@@ -110,7 +105,6 @@ export default function MyOrders() {
             </motion.div>
           )}
 
-          {/* Liste des commandes */}
           {orders.length === 0 && !error ? (
             <motion.div variants={item} className="bg-white rounded-[2rem] border border-[#1A3619]/10 shadow-sm p-10 text-center">
               <Package className="w-16 h-16 text-[#1A3619]/20 mx-auto mb-4" />
@@ -129,7 +123,7 @@ export default function MyOrders() {
                 const statusStyle = getStatusDisplay(order.status);
                 
                 return (
-                  <div key={order._id} className="bg-white p-5 md:p-6 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6 transition-all hover:shadow-md">
+                  <div key={order._id} className="bg-[#F6F1E7]  p-5 md:p-6 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6 transition-all hover:shadow-md">
                     
                     {/* Détails de la commande */}
                     <div className="flex-1 space-y-4">
@@ -143,14 +137,41 @@ export default function MyOrders() {
                       </div>
                       
                       <div>
+                        {/* 1. Nom de la commande (Produit) */}
                         <h3 className="text-xl font-bold text-[#1A3619] mb-1">{order.productName}</h3>
                         <div className="flex flex-wrap items-center gap-2 text-sm">
                           <span className="text-[#1A3619]/70 font-medium">Farmer:</span>
                           <span className="text-[#D96B40] font-semibold">{order.farmerId?.name || 'Unknown'}</span>
-                          {order.farmerId?.region && (
-                            <span className="text-[#1A3619]/50 text-xs">({order.farmerId.region})</span>
-                          )}
                         </div>
+                      </div>
+
+                      {/* ========================================== */}
+                      {/* 2. Suivi : Infos du Transporteur */}
+                      {/* ========================================== */}
+                      <div className="bg-[#FAF9F4] p-4 rounded-2xl border border-[#1A3619]/5 max-w-md space-y-2">
+                        <h4 className="text-xs font-bold text-[#1A3619]/70 uppercase tracking-wider flex items-center gap-1.5">
+                          <Truck className="w-3.5 h-3.5 text-[#D96B40]" /> Delivery Details
+                        </h4>
+                        
+                        {/* Vérification si un transporteur est assigné (grâce au populate) */}
+                        {order.transporterId && typeof order.transporterId === 'object' && order.transporterId.name ? (
+                          <div className="space-y-1.5">
+                            <p className="text-sm font-bold text-[#1A3619] flex items-center gap-1.5">
+                              <User className="w-3.5 h-3.5 text-[#1A3619]/60" /> 
+                              Carrier: {order.transporterId.name}
+                            </p>
+                            <p className="text-xs text-[#1A3619]/70 flex items-center gap-1.5 font-medium">
+                              <Phone className="w-3.5 h-3.5 text-[#1A3619]/60" /> 
+                              Phone: <a href={`tel:${order.transporterId.phone}`} className="text-[#D96B40] hover:underline font-semibold">{order.transporterId.phone || "No phone provided"}</a>
+                            </p>
+                          </div>
+                        ) : (
+                          <p className="text-xs italic text-gray-400 py-1">
+                            {order.status === 'New' 
+                              ? "Waiting for farmer confirmation." 
+                              : "Farmer is preparing your order. Assigning carrier soon..."}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -167,7 +188,6 @@ export default function MyOrders() {
                         <p className="text-2xl font-serif font-bold text-[#1A3619]">{order.formattedTotal}</p>
                       </div>
 
-                      {/* Le bouton d'annulation n'est visible que si la commande est "New" */}
                       {order.status === 'New' && (
                         <button 
                           onClick={() => handleCancelOrder(order._id)}

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
   Package, DollarSign, Calendar, 
-  Edit3, Trash2, ArrowLeft, Filter, Loader2, X 
+  Edit3, Trash2, ArrowLeft, Loader2, X 
 } from 'lucide-react';
 
 export default function MyInventory() {
@@ -162,18 +162,23 @@ export default function MyInventory() {
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
           
           {/* HEADER & RETOUR */}
-          <motion.div variants={item} className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">
-                My Full Inventory
-              </h1>
-              <p className="mt-2 text-[#1A3619]/60 font-medium">Manage all your harvested products here.</p>
-            </div>
-          </motion.div>
+          <motion.div 
+  variants={item} 
+  className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#1A3619]/10 pb-6"
+>
+  <div>
+    <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+      <span className="block font-medium text-[#1A3619]/80">Your virtual farm,</span>
+      <span className="block font-bold text-[#D96B40]">your fresh bounty! </span>
+    </h1>
+    <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+      Keep your virtual farm stand beautifully stocked and manage everything you've lovingly grown.
+    </p>
+  </div>
+</motion.div>
 
           {/* BARRE DE FILTRES */}
-          <motion.div variants={item} className="bg-white p-2 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-wrap gap-2 items-center">
-            <div className="pl-4 pr-2 text-[#1A3619]/40"><Filter className="w-5 h-5" /></div>
+          <motion.div variants={item} className="bg-[#F6F1E7] p-2 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-wrap gap-2 items-center">
             {categories.map((cat) => (
               <button
                 key={cat}
@@ -203,7 +208,7 @@ export default function MyInventory() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredInventory.map((prod) => (
-                  <div key={prod._id} className="group bg-white border border-[#1A3619]/10 rounded-[2rem] overflow-hidden hover:border-[#D96B40]/40 transition-all duration-300 shadow-sm hover:shadow-md">
+                  <div key={prod._id} className="group bg-[#F6F1E7] border border-[#1A3619]/10 rounded-[2rem] overflow-hidden hover:border-[#D96B40]/40 transition-all duration-300 shadow-sm hover:shadow-md">
                     <div className="relative h-48 overflow-hidden bg-gray-100">
                       <img src={prod.image === "default-image-url.jpg" ? "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop" : prod.image} alt={prod.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

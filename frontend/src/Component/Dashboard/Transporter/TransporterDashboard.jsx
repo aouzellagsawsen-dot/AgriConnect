@@ -14,14 +14,33 @@ export default function TransporterDashboard() {
   const [earningsChartData, setEarningsChartData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // État pour le nom du transporteur (initialisé vide)
+  const [transporterName, setTransporterName] = useState("");
 
-  // Fonction centrale pour charger les données réelles
+  const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
+  const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } };
+
+  // 1. Fonction pour récupérer le nom du transporteur via le cookie de session
+  const fetchUserName = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/api/auth/check-auth', {
+        withCredentials: true
+      });
+      if (response.data.success && response.data.user) {
+        setTransporterName(response.data.user.name);
+      }
+    } catch (err) {
+      console.error("Impossible de récupérer le nom du transporteur:", err);
+    }
+  };
+
+  // 2. Fonction pour récupérer les données du dashboard
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // 👉 MODIFICATION : On utilise 'withCredentials: true' pour transmettre automatiquement le Cookie de connexion
       const response = await axios.get('http://localhost:3000/api/orders/my-deliveries', {
         withCredentials: true
       });
@@ -30,11 +49,9 @@ export default function TransporterDashboard() {
         const allOrders = response.data.orders || [];
         setDeliveries(allOrders);
 
-        // 1. Filtrer les livraisons actives (statut "In Transit")
         const active = allOrders.filter(order => order.status === 'In Transit');
         setActiveDeliveries(active);
 
-        // 2. Calculer les statistiques globales
         const completedOrders = allOrders.filter(order => order.status === 'Delivered');
         const totalSum = completedOrders.reduce((sum, order) => sum + (order.deliveryFee || 0), 0);
 
@@ -44,7 +61,6 @@ export default function TransporterDashboard() {
           pending: active.length
         });
 
-        // 3. Générer les données réelles pour le graphique
         const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
         const chartDataMap = daysOfWeek.map(day => ({ name: day, amount: 0 }));
 
@@ -62,22 +78,22 @@ export default function TransporterDashboard() {
       }
     } catch (err) {
       console.error("Erreur dashboard transporteur :", err);
-      setError("Impossible de charger vos statistiques de livraison.");
+      setError("Impossible to load your delivery statistics.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Lancement des deux requêtes au chargement
   useEffect(() => {
+    fetchUserName();
     fetchDashboardData();
   }, []);
 
-  // Validation d'une livraison (passage au statut 'Delivered')
   const handleCompleteDelivery = async (deliveryId) => {
     if (!window.confirm("Confirmez-vous que la marchandise a bien été livrée à l'acheteur ?")) return;
     
     try {
-      // 👉 CORRECTIONS : Port 3000 + transmission sécurisée des Cookies avec withCredentials
       const response = await axios.put(`http://localhost:3000/api/orders/${deliveryId}/status`, 
         { status: 'Delivered' },
         { withCredentials: true }
@@ -93,177 +109,191 @@ export default function TransporterDashboard() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex flex-col items-center justify-center">
-        <Loader2 className="w-12 h-12 text-[#1A3619] animate-spin mb-4" />
-        <p className="text-[#1A3619]/60 font-medium">Loading your real-time data...</p>
-      </div>
-    );
-  }
+  if (isLoading) return (
+    <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex flex-col items-center justify-center">
+      <Loader2 className="w-12 h-12 text-[#1A3619] animate-spin mb-4" />
+      <p className="text-[#1A3619]/60 font-medium">Loading data...</p>
+    </div>
+  );
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex flex-col items-center justify-center p-6">
-        <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
-        <p className="text-[#1A3619] font-bold text-lg mb-2">{error}</p>
+  if (error) return (
+    <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px] flex items-center justify-center p-6">
+      <div className="bg-red-50 text-red-600 p-6 rounded-2xl border border-red-200 text-center max-w-md shadow-sm">
+        <AlertCircle className="w-10 h-10 mx-auto mb-3 text-red-500" />
+        <h2 className="font-bold text-lg mb-2">Error</h2>
+        <p className="text-sm mb-4">{error}</p>
         <button 
           onClick={fetchDashboardData}
-          className="px-6 py-2.5 bg-[#1A3619] text-white font-bold rounded-xl"
+          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors"
         >
           Try Again
         </button>
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
-      <div className="max-w-6xl mx-auto space-y-8">
-        
-        {/* HEADER */}
-        <div>
-          <h1 className="text-3xl lg:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">
-            Transporter Dashboard
-          </h1>
-          <p className="text-[#1A3619]/60 mt-1">Manage your routes, tracking, and logistics earnings.</p>
-        </div>
+    <div className="min-h-screen bg-[#FAF9F4] lg:pl-[300px]">
+      <div className="h-20 lg:h-0" />
+      
+      <main className="p-6 lg:p-10 max-w-7xl mx-auto">
+        <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
+          
+          {/* HEADER HUMANISÉ */}
+          <motion.div variants={item} className="border-b border-[#1A3619]/10 pb-6 mb-8">
+  <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+    <span className="block font-medium text-[#1A3619]/80">Welcome to the road,</span>
+    <span className="block font-bold text-[#D96B40]">{transporterName || "Driver"}! </span>
+  </h1>
+  <p className="text-[#1A3619]/60 mt-3 font-medium text-sm">
+    Ready for your next trip? Track your active deliveries, explore optimal routes, and watch your earnings grow.
+  </p>
+</motion.div>
 
-        {/* STATS CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#1A3619]/50 uppercase tracking-wider">Total Earnings</span>
-              <h3 className="text-2xl font-bold text-[#1A3619]">{stats.totalEarnings} DZD</h3>
+          {/* STATS CARDS */}
+          <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-[#4A783A] p-6 rounded-[2rem] shadow-sm flex flex-col justify-between min-h-[150px] text-white">
+              <div className="flex justify-between items-start">
+                <Wallet className="w-6 h-6" />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl font-serif font-medium mb-1">
+                  {stats.totalEarnings} DZD
+                </h3>
+                <p className="text-white/90 text-sm">Total Earnings</p>
+              </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-[#1A3619]/5 text-[#1A3619] flex items-center justify-center">
-              <Wallet className="w-6 h-6" />
-            </div>
-          </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#1A3619]/50 uppercase tracking-wider">Completed Trips</span>
-              <h3 className="text-2xl font-bold text-[#1A3619]">{stats.completed}</h3>
+            <div className="bg-[#D96B40] p-6 rounded-[2rem] shadow-sm flex flex-col justify-between min-h-[150px] text-white">
+              <div className="flex justify-between items-start">
+                <CheckCircle2 className="w-6 h-6" />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl font-serif font-medium mb-1">
+                  {stats.completed}
+                </h3>
+                <p className="text-white/90 text-sm">Completed Trips</p>
+              </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-          </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="text-xs font-bold text-[#1A3619]/50 uppercase tracking-wider">Active Deliveries</span>
-              <h3 className="text-2xl font-bold text-[#1A3619]">{stats.pending}</h3>
+            <div className="bg-[#F4A261] p-6 rounded-[2rem] shadow-sm flex flex-col justify-between min-h-[150px] text-[#1A3619]">
+              <div className="flex justify-between items-start">
+                <Clock className="w-6 h-6 text-[#1A3619]" />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-2xl font-serif font-medium mb-1">
+                  {stats.pending}
+                </h3>
+                <p className="text-[#1A3619]/90 text-sm">Active Deliveries</p>
+              </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center">
-              <Clock className="w-6 h-6" />
+          </motion.div>
+
+          {/* CHART & STATS */}
+          <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 bg-[#F6F1E7] p-6 md:p-8 rounded-[2rem] border border-[#1A3619]/15 shadow-sm space-y-4">
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <p className="text-sm italic font-medium text-[#D96B40] mb-1">Logistics analytics</p>
+                  <h2 className="text-2xl font-serif font-bold text-[#1A3619]">Weekly Income Analytics</h2>
+                </div>
+                <span className="text-xs font-bold text-[#D96B40] flex items-center gap-1">
+                  <TrendingUp className="w-3.5 h-3.5" /> Live
+                </span>
+              </div>
+              <div className="h-[300px] w-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={earningsChartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                    <defs>
+                      <linearGradient id="colorEarning" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#1A3619" stopOpacity={0.2}/>
+                        <stop offset="95%" stopColor="#1A3619" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <XAxis dataKey="name" stroke="#1A3619" opacity={0.4} fontSize={12} tickLine={false} axisLine={false} dy={10} />
+                    <YAxis stroke="#1A3619" opacity={0.4} fontSize={12} tickLine={false} axisLine={false} dx={-10} />
+                    <Tooltip 
+                      formatter={(value) => [`${value} DZD`, 'Earnings']} 
+                      contentStyle={{ borderRadius: '1rem', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Area type="monotone" dataKey="amount" stroke="#1A3619" strokeWidth={4} fillOpacity={1} fill="url(#colorEarning)" activeDot={{ r: 6, fill: '#D96B40', strokeWidth: 0 }} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
 
-        {/* CHART & STATS */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-bold text-[#1A3619]">Weekly Income Analytics</h2>
-              <span className="text-xs font-bold text-[#D96B40] flex items-center gap-1">
-                <TrendingUp className="w-3.5 h-3.5" /> Real-time database tracking
-              </span>
-            </div>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={earningsChartData}>
-                  <defs>
-                    <linearGradient id="colorEarning" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#1A3619" stopOpacity={0.2}/>
-                      <stop offset="95%" stopColor="#1A3619" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <XAxis dataKey="name" stroke="#1A3619" opacity={0.4} fontSize={12} tickLine={false} />
-                  <YAxis stroke="#1A3619" opacity={0.4} fontSize={12} tickLine={false} />
-                  <Tooltip formatter={(value) => [`${value} DZD`, 'Earnings']} />
-                  <Area type="monotone" dataKey="amount" stroke="#1A3619" strokeWidth={2} fillOpacity={1} fill="url(#colorEarning)" />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
+          {/* ACTIVE DELIVERIES LIST */}
+          <motion.div variants={item} className="space-y-4">
+            <h2 className="text-2xl font-serif font-bold text-[#1A3619] mb-4">Active Shipments in Progress</h2>
+            {activeDeliveries.length === 0 ? (
+              <div className="bg-[#F6F1E7]  border border-[#1A3619]/10 rounded-[2rem] p-10 text-center">
+                <Truck className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-4" />
+                <p className="text-[#1A3619]/60 font-medium">No active deliveries. Go to "Available Shipments" to take new orders!</p>
+              </div>
+            ) : (
+              activeDeliveries.map((delivery) => (
+                <div 
+                  key={delivery._id}
+                  className="bg-[#F6F1E7]  p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow duration-300"
+                >
+                  {/* Details */}
+                  <div className="space-y-4 flex-1">
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
+                        {delivery.orderNumber}
+                      </span>
+                      <span className="text-xs text-[#D96B40] font-bold flex items-center gap-1">
+                        <Navigation className="w-3.5 h-3.5" /> {delivery.distanceKm ? `${delivery.distanceKm} km` : "N/A"}
+                      </span>
+                    </div>
 
-        </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-[#1A3619]">{delivery.productName} ({delivery.quantity})</h3>
+                      <p className="text-xs text-[#1A3619]/60">Farmer: {delivery.farmerId?.name || "Unknown Farmer"}</p>
+                    </div>
 
-        {/* ACTIVE DELIVERIES LIST */}
-        <div className="space-y-4">
-          <h2 className="text-xl font-serif font-bold text-[#1A3619]">Active Shipments in Progress</h2>
-          {activeDeliveries.length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-3xl border border-[#1A3619]/10">
-              <Truck className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-3" />
-              <p className="text-[#1A3619]/60 font-medium">No active deliveries. Go to "Available Shipments" to take new orders!</p>
-            </div>
-          ) : (
-            activeDeliveries.map((delivery) => (
-              <motion.div 
-                key={delivery._id}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6"
-              >
-                {/* Details */}
-                <div className="space-y-4 flex-1">
-                  <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
-                      {delivery.orderNumber}
-                    </span>
-                    <span className="text-xs text-[#D96B40] font-bold flex items-center gap-1">
-                      <Navigation className="w-3.5 h-3.5" /> {delivery.distanceKm ? `${delivery.distanceKm} km` : "N/A"}
-                    </span>
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-bold text-[#1A3619]">{delivery.productName} ({delivery.quantity})</h3>
-                    <p className="text-xs text-[#1A3619]/60">Farmer: {delivery.farmerId?.name || "Unknown Farmer"}</p>
-                  </div>
-
-                  {/* Route Traveled */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-[#1A3619] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Pickup Location</p>
-                        <p className="text-xs font-medium text-[#1A3619]">{delivery.farmerId?.region || "Farm location"}</p>
+                    {/* Route Traveled */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-[#1A3619] shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase">Pickup Location</p>
+                          <p className="text-xs font-medium text-[#1A3619]">{delivery.farmerId?.region || "Farm location"}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-[#D96B40] shrink-0 mt-0.5" />
+                        <div>
+                          <p className="text-[10px] font-bold text-gray-400 uppercase">Delivery Location</p>
+                          <p className="text-xs font-medium text-[#1A3619]">{delivery.deliveryAddress}</p>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-[#D96B40] shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase">Delivery Location</p>
-                        <p className="text-xs font-medium text-[#1A3619]">{delivery.deliveryAddress}</p>
-                      </div>
+                  </div>
+
+                  {/* Pricing and Action Button */}
+                  <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-gray-100 md:pl-6 pt-4 md:pt-0">
+                    <div className="text-right w-full">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase">Your Delivery Payout</span>
+                      <p className="text-2xl font-serif font-bold text-[#1A3619]">
+                        {delivery.deliveryFee ? `${delivery.deliveryFee.toLocaleString()} DZD` : "Free"}
+                      </p>
                     </div>
+
+                    <button
+                      onClick={() => handleCompleteDelivery(delivery._id)}
+                      className="w-full mt-4 md:mt-0 py-3 px-4 bg-[#1A3619] hover:bg-[#3d5a2a] text-white font-bold rounded-2xl shadow-lg shadow-[#1A3619]/10 transition-colors flex items-center justify-center gap-2 text-sm"
+                    >
+                      <CheckCircle2 className="w-4 h-4" /> Validate Delivery
+                    </button>
                   </div>
                 </div>
-
-                {/* Pricing and Action Button */}
-                <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-gray-100 md:pl-6 pt-4 md:pt-0">
-                  <div className="text-right w-full">
-                    <span className="text-[10px] font-bold text-gray-400 uppercase">Your Delivery Payout</span>
-                    <p className="text-2xl font-serif font-bold text-[#1A3619]">
-                      {delivery.deliveryFee ? `${delivery.deliveryFee.toLocaleString()} DZD` : "Free"}
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={() => handleCompleteDelivery(delivery._id)}
-                    className="w-full mt-4 md:mt-0 py-3 px-4 bg-[#1A3619] hover:bg-[#3d5a2a] text-white font-bold rounded-2xl shadow-lg shadow-[#1A3619]/10 transition-colors flex items-center justify-center gap-2 text-sm"
-                  >
-                    <CheckCircle2 className="w-4 h-4" /> Validate Delivery
-                  </button>
-                </div>
-              </motion.div>
-            ))
-          )}
-        </div>
-
-      </div>
+              ))
+            )}
+          </motion.div>
+        </motion.div>
+      </main>
     </div>
   );
 }

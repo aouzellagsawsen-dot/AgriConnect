@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Globe2, Leaf, Recycle, XCircle, CheckCircle2, Users, ArrowLeft } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Globe2, Leaf, Recycle, XCircle, CheckCircle2, ArrowLeft } from 'lucide-react';
 
 export default function About() {
   return (
@@ -73,21 +73,7 @@ export default function About() {
               className="relative z-10 rounded-[2.5rem] w-full h-[450px] lg:h-[550px] object-cover shadow-2xl border-4 border-white"
             />
 
-            {/* Badge flottant avec des couleurs vives */}
-            <motion.div 
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 0.8, duration: 0.5 }}
-              className="absolute -bottom-8 -left-8 z-20 bg-white p-5 rounded-3xl shadow-2xl flex items-center gap-4 border border-[#1A3619]/5"
-            >
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D96B40] to-[#f0855b] flex items-center justify-center text-white shadow-lg">
-                <Users size={28} />
-              </div>
-              <div>
-                <p className="text-3xl font-black text-[#1A3619] tracking-tight">10,000+</p>
-                <p className="text-xs text-[#D96B40] font-bold uppercase tracking-wider">Farmers Joined</p>
-              </div>
-            </motion.div>
+           
           </motion.div>
 
         </div>

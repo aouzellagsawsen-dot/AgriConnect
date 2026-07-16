@@ -16,12 +16,11 @@ import axios from 'axios';
 // 1. GROUPS DE MENUS POUR LE TRANSPORTEUR
 const menuGroups = [
   {
-    title: "Logistics & Transport",
     items: [
       { id: 'home', label: 'Dashboard', icon: LayoutDashboard, path: '/Tdash' },
-      { id: 'offers', label: 'Available Shipments', icon: Search, path: '/Toffers' }, // Recherche de charges (Fermier -> Acheteur)
-      { id: 'deliveries', label: 'My Deliveries', icon: Truck, path: '/Tdeliveries' }, // Commandes acceptées / En transit
-      { id: 'map', label: 'Routing Map', icon: Map, path: '/Tmap' }, // Intégration Google Maps / Mapbox
+      { id: 'offers', label: 'Available Shipments', icon: Search, path: '/Toffers' }, 
+      { id: 'deliveries', label: 'My Deliveries', icon: Truck, path: '/Tdeliveries' },
+      { id: 'map', label: 'Routing Map', icon: Map, path: '/Tmap' }, 
     ]
   }
 ];
@@ -39,21 +38,24 @@ export default function TransporterSidebar() {
       
       {/* --- LOGO AREA --- */}
       <div className="p-6 md:p-8 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A3619] to-[#3d5a2a] flex items-center justify-center shadow-lg shadow-[#1A3619]/20">
-          <Leaf className="w-6 h-6 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A3619] to-[#3d5a2a] flex items-center justify-center shadow-lg shadow-[#1A3619]/20">
+                <Leaf className="w-6 h-6 text-white" />
+              </div>
+              <div className="flex flex-col items-start">
+          <span className="font-serif text-2xl font-bold text-[#1A3619] tracking-tight leading-tight">
+            Agri<span className="text-[#D96B40] italic">Connect</span>
+          </span>
+          <span className="text-[11px] font-medium text-[#1A3619]/50 tracking-wide mt-0.5 whitespace-nowrap">
+            Grown with care, nearby.
+          </span>
         </div>
-        <span className="font-serif text-2xl font-bold text-[#1A3619] tracking-tight">
-          Agri<span className="text-[#D96B40] italic">Connect</span>
-        </span>
-      </div>
+            </div>
+      
 
       {/* --- NAVIGATION LINKS --- */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-6 space-y-8 scrollbar-hide">
         {menuGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
-            <span className="inline-block text-[10px] font-bold tracking-widest uppercase text-[#D96B40] mb-3 ml-2">
-              {group.title}
-            </span>
             <nav className="space-y-1.5">
               {group.items.map((item) => {
                 const isActive = activeItem === item.id;
@@ -63,9 +65,9 @@ export default function TransporterSidebar() {
                   <motion.button
                     key={item.id}
                     onClick={() => {
-                      setActiveItem(item.id);     // Met à jour l'état visuel actif
-                      setIsMobileOpen(false);     // Ferme le menu sur mobile
-                      navigate(item.path);        // Redirection vers l'espace transporteur
+                      setActiveItem(item.id);     
+                      setIsMobileOpen(false);     
+                      navigate(item.path);        
                     }}
                     whileHover={{ x: isActive ? 0 : 4 }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 ${

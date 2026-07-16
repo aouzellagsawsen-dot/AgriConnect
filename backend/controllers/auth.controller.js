@@ -1,7 +1,7 @@
 import User from "../Models/user.model.js"
 import bcryptjs from "bcryptjs"
 import { generateTokenAndSetCookie } from "../Utils/generateTokenandsetCookie.js"
-import { sendVerificationEmail, sendPasswordResetEmail, sendResetSucessEmail, sendWelcomeEmail } from "../nodemailer/email.js"
+import { sendPasswordResetEmail, sendResetSucessEmail, sendWelcomeEmail } from "../nodemailer/email.js"
 import crypto from "crypto"
 import axios from "axios"
 import { OAuth2Client } from 'google-auth-library';
@@ -28,13 +28,12 @@ export const signup = async (req, res) => {
       country,
       region,
       address,
-      verificationToken,
-      verificationTokenExpireAt: Date.now() + 24 * 60 * 60 * 1000
+      isVerified: true
     })
     
     await user.save()
     generateTokenAndSetCookie(res, user._id)
-    await sendVerificationEmail(user.email, verificationToken)
+    await sendWelcomeEmail(user.email, user.name)
     
     res.status(201).json({ success: true, message: "user created successfully", user: { ...user._doc, password: undefined } })
   } catch (error) {
@@ -72,31 +71,6 @@ export const logout = async (req, res) => {
     httpOnly: true
   });
   res.status(200).json({ success: true, message: "logout successfully" })
-}
-
-export const verifyEmail = async (req, res) => {
-  const { code } = req.body
-  try {
-    const user = await User.findOne({
-      verificationToken: code,
-      verificationTokenExpireAt: { $gt: Date.now() }
-    })
-    if (!user) {
-      return res.status(400).json({ success: false, message: "invalid or expired reset token" })
-    }
-    
-    user.isVerified = true
-    user.verificationToken = undefined
-    user.verificationTokenExpireAt = undefined
-    await user.save() 
-    
-    await sendWelcomeEmail(user.email, user.name)
-    
-    res.status(200).json({ success: true, message: "email verified successfully", user: { ...user._doc, password: undefined } })
-  } catch (error) {
-    console.log("error in verified email", error)
-    res.status(500).json({ success: false, message: "server error" })
-  }
 }
 
 export const forgotPassword = async (req, res) => {

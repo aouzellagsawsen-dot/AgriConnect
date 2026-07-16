@@ -3,9 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Plus, AlertCircle, ShoppingBag, 
-  DollarSign, Package, Calendar, ArrowRight,
-  MoreVertical, Clock, Truck, Loader2, X, Edit3, Trash2
+  Plus, AlertCircle, Calendar, ArrowRight,
+  MoreVertical, Clock, Loader2, X, Edit3, Trash2,
+  Wallet, Truck, Sprout, Package, DollarSign
 } from 'lucide-react';
 
 export default function Dashboard() {
@@ -78,27 +78,27 @@ export default function Dashboard() {
         title: "Total Revenue (Delivered)", 
         value: `${backendRevenue} ${currentCurrency}`, 
         rawRevenue: backendRevenue,
-        trend: "Updated now", 
-        isPositive: true, 
-        icon: DollarSign, 
-        color: "text-[#1A3619]" 
+        icon: Wallet, 
+        bgColor: "bg-[#345E37]", 
+        textColor: "text-white",
+        labelColor: "text-white/80"
       },
       { 
         title: "Pending Orders", 
         value: pendingCount.toString(), 
         rawValue: pendingCount,
-        trend: "Action required", 
-        isPositive: false, 
-        icon: ShoppingBag, 
-        color: "text-[#D96B40]" 
+        icon: Truck, 
+        bgColor: "bg-[#D96B40]", 
+        textColor: "text-white",
+        labelColor: "text-white/80" 
       },
       { 
         title: "Products in Stock", 
         value: totalProductsCount.toString(),
-        trend: "Total Items", 
-        isPositive: true, 
-        icon: Package, 
-        color: "text-[#1A3619]" 
+        icon: Sprout, 
+        bgColor: "bg-[#ECC861]", 
+        textColor: "text-[#1A3619]",
+        labelColor: "text-[#1A3619]/80" 
       },
     ]);
   };
@@ -273,87 +273,147 @@ export default function Dashboard() {
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
           
           {/* HEADER */}
-          <motion.div variants={item} className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">
-                Welcome, <em className="text-[#D96B40] not-italic">{farmerName || "Farmer"}.</em>
-              </h1>
-              <p className="mt-2 text-[#1A3619]/60 font-medium">Here is what's happening on your farm today.</p>
-            </div>
-            <button onClick={() => setIsModalOpen(true)} className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1A3619] hover:bg-[#2a5227] text-white font-semibold rounded-2xl shadow-lg transition-all transform hover:-translate-y-1 duration-300">
-             <Plus className="w-5 h-5" /> Add New Harvest
-            </button>
-          </motion.div>
+<motion.div 
+  variants={item} 
+  className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#1A3619]/10 pb-8"
+>
+  <div>
+    <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+      <span className="block font-medium text-[#1A3619]/80">Welcome back,</span>
+      <span className="block font-bold text-[#D96B40]">{farmerName || "Farmer"}! </span>
+    </h1>
+    <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+      Thank you for feeding our community. Here is a snapshot of your hard work today.
+    </p>
+  </div>
+  
+  <button 
+    onClick={() => setIsModalOpen(true)} 
+    className="group inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#1A3619] hover:bg-[#2a5227] text-white font-semibold rounded-2xl shadow-lg transition-all transform hover:-translate-y-1 duration-300 shrink-0"
+  >
+    <Plus className="w-5 h-5" /> Add New Harvest
+  </button>
+</motion.div>
 
           {/* KPI CARDS */}
-          {/* ... (Code des KPI reste identique) ... */}
           <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
-            {stats.map((stat, idx) => {
-              const Icon = stat.icon;
-              return (
-                <div key={idx} className="bg-white p-6 rounded-[2rem] border border-[#1A3619]/10 shadow-sm">
-                  <div className="flex justify-between items-start mb-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center bg-gray-50 ${stat.color}`}><Icon className="w-6 h-6" /></div>
-                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${stat.isPositive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{stat.trend}</span>
-                  </div>
-                  <h3 className="text-[#1A3619]/60 text-sm font-semibold mb-1">{stat.title}</h3>
-                  <p className="text-2xl lg:text-3xl font-serif font-bold text-[#1A3619]">{stat.value}</p>
-                </div>
-              );
-            })}
-          </motion.div>
+  {stats.map((stat, idx) => {
+    const Icon = stat.icon;
+    return (
+      <div 
+        key={idx} 
+        className={`p-7 rounded-[2rem] shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[170px] transition-all hover:scale-[1.02] duration-300 ${stat.bgColor} ${stat.textColor}`}
+      >
+        {/* Ligne du haut : Uniquement l'icône principale à gauche */}
+        <div className="flex items-center">
+          <Icon className="w-7 h-7 stroke-[1.5]" />
+        </div>
+        
+        {/* Ligne du bas : Valeur en grand, puis titre en dessous */}
+       <div className="mt-6">
+  <p className="text-lg lg:text-2xl font-serif font-bold mb-1 tracking-tight">
+    {stat.value}
+  </p>
+  <h3 className={`text-xs font-semibold tracking-wide ${stat.labelColor}`}>
+    {stat.title}
+  </h3>
+</div>
+      </div>
+    );
+  })}
+</motion.div>
 
           {/* RECENT ORDERS TABLE */}
          <div className="w-full">
-            <motion.div variants={item} className="w-full bg-white rounded-[2rem] border border-[#1A3619]/10 shadow-sm p-6 lg:p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-serif font-bold text-[#1A3619]">Recent Orders</h2>
-                <button onClick={() => navigate('/farOrd')}
-                className="text-sm font-semibold text-[#D96B40] hover:text-[#b55834] flex items-center gap-1">View All <ArrowRight className="w-4 h-4" /></button>
-              </div>
-              <div className="overflow-x-auto">
-                {recentOrders.length === 0 ? (
-                  <p className="text-[#1A3619]/50 text-center py-6">No recent orders found.</p>
-                ) : (
-                  <table className="w-full text-left border-collapse">
-                    <thead>
-                      <tr className="border-b border-[#1A3619]/10 text-[#1A3619]/50 text-xs uppercase tracking-wider">
-                        <th className="pb-3 font-semibold">Order / Date</th>
-                        <th className="pb-3 font-semibold">Buyer</th>
-                        <th className="pb-3 font-semibold">Product</th>
-                        <th className="pb-3 font-semibold">Status</th>
-                        <th className="pb-3 font-semibold text-right">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {recentOrders.map((order, idx) => (
-                        <tr key={idx} className="border-b border-[#1A3619]/5 last:border-0 hover:bg-[#FAF9F4]/50 transition-colors">
-                          <td className="py-4"><p className="font-bold text-[#1A3619] text-sm">{order.id}</p><p className="text-xs text-[#1A3619]/50 mt-0.5">{order.date}</p></td>
-                          <td className="py-4">
-                             <p className="text-sm font-medium text-[#1A3619]">{order.buyer}</p>
-                             <p className="text-xs text-[#1A3619]/60 max-w-[150px] truncate" title={order.deliveryAddress}> {order.deliveryAddress || "No address provided"}</p>
-                          </td>
-                          <td className="py-4"><p className="text-sm text-[#1A3619] font-medium">{order.product}</p><p className="text-xs text-[#1A3619]/60">{order.total}</p></td>
-                          <td className="py-4">{getStatusBadge(order.status)}</td>
-                          <td className="py-4 text-right">
-                            <select 
-                              value={order.status}
-                              onChange={(e) => handleOrderStatus(order._id, e.target.value)}
-                              className="text-xs font-bold bg-white border border-[#1A3619]/20 text-[#1A3619] rounded-lg px-2 py-1.5 outline-none cursor-pointer hover:border-[#D96B40] transition-colors"
-                            >
-                              <option value="New">New</option>
-                              <option value="Preparing">Preparing</option>
-                              <option value="In Transit">In Transit</option>
-                              <option value="Delivered">Delivered</option>
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </motion.div>
+            <motion.div variants={item} className="w-full bg-[#F6F1E7] rounded-[2rem] border border-[#1A3619]/10 shadow-sm p-6 lg:p-8">
+  <div className="flex items-center justify-between mb-6">
+    <div>
+      <p className="text-sm italic font-medium text-[#D96B40] mb-1 font-sans">Logbook</p>
+      <h2 className="text-xl font-serif font-bold text-[#1A3619]">Recent Orders</h2>
+    </div>
+    <button 
+      onClick={() => navigate('/farOrd')}
+      className="text-sm font-semibold text-[#D96B40] hover:text-[#b55834] flex items-center gap-1 transition-colors"
+    >
+      View All <ArrowRight className="w-4 h-4" />
+    </button>
+  </div>
+
+  <div className="flex flex-col gap-4">
+    {recentOrders.length === 0 ? (
+      <div className="bg-white/50 rounded-3xl p-8 text-center border border-[#1A3619]/5">
+        <p className="text-[#1A3619]/50 font-medium">No recent orders found.</p>
+      </div>
+    ) : (
+      // Limits the display to only the 3 most recent orders
+      recentOrders.slice(0, 3).map((order, idx) => (
+        <div 
+          key={idx} 
+          className="bg-white rounded-3xl p-5 md:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-[#1A3619]/5"
+        >
+          
+          {/* Section 1 : Produit et Date */}
+          <div className="flex-1 w-full xl:w-auto">
+            <h4 className="text-[#1A3619] text-base lg:text-lg font-bold">{order.product}</h4>
+            <p className="text-[#1A3619]/50 text-xs font-medium mt-0.5">
+              Ordered on {order.date}
+            </p>
+          </div>
+          
+          {/* Section 2 : Encadré acheteur et Prix (High contrast) */}
+          <div className="flex-1 w-full bg-[#FAF9F4] p-4 rounded-2xl border border-[#1A3619]/5 flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 mb-0.5">
+                Buyer
+              </p>
+              <p className="text-sm font-bold text-[#1A3619]">{order.buyer}</p>
+            </div>
+            <div className="text-right pl-4 border-l border-[#1A3619]/10">
+              <p className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 mb-0.5">
+                Total
+              </p>
+              <p className="text-sm font-bold text-[#D96B40]">{order.total}</p>
+            </div>
+          </div>
+          
+          {/* Section 3 : Boutons de statuts interactifs */}
+          <div className="flex flex-col xl:items-end gap-2 w-full xl:w-auto shrink-0">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 block">
+              Update Status
+            </span>
+            <div className="flex flex-wrap gap-1.5">
+              {['New', 'Preparing', 'In Transit', 'Delivered'].map(status => {
+                const isActive = order.status === status;
+                
+                // High-contrast active styles for easy visual tracking
+                let activeStyle = "";
+                if (status === 'New') activeStyle = "bg-[#D96B40] text-white shadow-sm ring-1 ring-[#D96B40]/25";
+                if (status === 'Preparing') activeStyle = "bg-amber-500 text-white shadow-sm ring-1 ring-amber-500/25";
+                if (status === 'In Transit') activeStyle = "bg-blue-600 text-white shadow-sm ring-1 ring-blue-600/25";
+                if (status === 'Delivered') activeStyle = "bg-[#345E37] text-white shadow-sm ring-1 ring-[#345E37]/25";
+
+                return (
+                  <button
+                    key={status}
+                    onClick={() => handleOrderStatus(order._id, status)}
+                    className={`px-3 py-1.5 text-[10px] font-bold rounded-full transition-all duration-200 ${
+                      isActive 
+                        ? activeStyle 
+                        : "bg-gray-50 text-[#1A3619]/50 hover:bg-[#1A3619]/5 hover:text-[#1A3619] border border-[#1A3619]/10 shadow-sm"
+                    }`}
+                  >
+                    {status}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+        </div>
+      ))
+    )}
+  </div>
+</motion.div>
           </div>
 
           {/* INVENTORY GRID */}
@@ -369,11 +429,12 @@ export default function Dashboard() {
             </div>
             
             {inventory.length === 0 ? (
-              <div className="bg-white border border-[#1A3619]/10 rounded-[2rem] p-10 text-center"><Package className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-4" /><p className="text-[#1A3619]/60">Your inventory is empty.</p></div>
+              <div className="bg-[#F6F1E7] border border-[#1A3619]/10 rounded-[2rem] p-10 text-center">\
+              <Package className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-4" /><p className="text-[#1A3619]/60">Your inventory is empty.</p></div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {inventory.slice(0, 3).map((prod) => (
-                  <div key={prod._id} className="group bg-white border border-[#1A3619]/10 rounded-[2rem] overflow-hidden hover:border-[#D96B40]/40 transition-all duration-300">
+                  <div key={prod._id} className="group bg-[#F6F1E7] border border-[#1A3619]/10 rounded-[2rem] overflow-hidden hover:border-[#D96B40]/40 transition-all duration-300">
                     <div className="relative h-40 overflow-hidden bg-gray-100">
                       <img src={prod.image === "default-image-url.jpg" ? "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=500&auto=format&fit=crop" : prod.image} alt={prod.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

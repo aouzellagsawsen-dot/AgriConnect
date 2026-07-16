@@ -38,13 +38,19 @@ export default function RoutingMap() {
   return (
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-serif font-bold text-[#1A3619]">Routing and Logistics Map</h1>
-          <p className="text-[#1A3619]/60 mt-1">Calculate your routes and view your pickup points.</p> 
-        </div>
-
+        
+        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
+        <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
+  <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+    <span className="block font-medium text-[#1A3619]/80">Your navigation center,</span>
+    <span className="block font-bold text-[#D96B40]">find the best route! </span>
+  </h1>
+  <p className="text-[#1A3619]/60 mt-3 font-medium text-sm">
+    Calculate your routes, view your pickup points, and optimize your travel times.
+  </p> 
+</div>
         {activeDeliveries.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-[#1A3619]/10">
+          <div className="text-center py-16 bg-[#F6F1E7]  rounded-3xl border border-[#1A3619]/10">
             <Map className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-3" />
             <p className="text-[#1A3619]/60 font-semibold">No active deliveries in progress</p>
             <p className="text-sm text-[#1A3619]/40 mt-1">Take charge of an order to see the delivery route here.</p>
@@ -61,8 +67,8 @@ export default function RoutingMap() {
                   onClick={() => setSelectedRoute(delivery)}
                   className={`w-full text-left p-4 rounded-2xl border transition-all ${
                     selectedRoute?._id === delivery._id 
-                      ? 'bg-white border-[#1A3619] shadow' 
-                      : 'bg-white/60 border-gray-100 hover:bg-white'
+                      ? 'bg-[#F6F1E7]  border-[#1A3619] shadow' 
+                      : 'bg-[#F6F1E7] border-[#1A3619]/10 hover:border-[#1A3619]/30'
                   }`}
                 >
                   <p className="font-bold text-sm text-[#1A3619]">{delivery.productName}</p>
@@ -74,12 +80,12 @@ export default function RoutingMap() {
               ))}
             </div>
 
-            {/* MAPPING SYSTEM (PROFESSIONAL VISUAL MOCKUP) */}
+            {/* MAPPING SYSTEM */}
             <div className="lg:col-span-2 space-y-6">
               {selectedRoute && (
                 <>
-                  <div className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b pb-4">
+                  <div className="bg-[#F6F1E7] p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b border-[#1A3619]/10 pb-4">
                       <div>
                         <h2 className="text-lg font-bold text-[#1A3619]">Detailed Route Sheet</h2>
                         <span className="text-xs text-emerald-600 font-semibold">Active GPS tracking</span>
@@ -130,19 +136,7 @@ export default function RoutingMap() {
                     </div>
                   </div>
 
-                  {/* MINI MAP SYSTEM DESIGN */}
-                  <div className="bg-[#1A3619] h-48 rounded-3xl p-6 flex flex-col justify-between overflow-hidden relative shadow-lg">
-                    <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#FAF9F4_1.5px,transparent_1.5px)] [background-size:16px_16px]"></div>
-                    <div className="z-10">
-                      <span className="text-[10px] bg-white/20 text-white uppercase tracking-wider px-2 py-1 rounded-full font-bold">GPS Routing Algorithm</span>
-                      <p className="text-xl font-serif text-white font-bold mt-2">Real-time guidance to {selectedRoute.deliveryAddress}</p>
-                    </div>
-                    <div className="flex items-center gap-4 text-white/80 text-xs z-10 border-t border-white/10 pt-4">
-                      <span>Average Speed: 80km/h</span>
-                      <span>•</span>
-                      <span>Estimated Arrival: ~2 hours</span>
-                    </div>
-                  </div>
+                  
                 </>
               )}
             </div>

@@ -21,7 +21,7 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
 
   const maghrebRegions = {
-    algeria: ["Algiers", "Oran", "Constantine", "Béjaïa", "Sétif", "Batna"],
+    algeria: ["Algiers", "Oran", "Constantine", "Béjaïa", "Sétif", "Batna", "Tizi Ouzou", "Jijel","Skikda", "Annaba", "Guelma","Tindouf" ],
     morocco: ["Casablanca", "Rabat", "Marrakech", "Fes", "Tangier"],
     tunisia: ["Tunis", "Sfax", "Sousse", "Kairouan", "Bizerte"],
     mauritania: ["Nouakchott", "Nouadhibou", "Rosso"],
@@ -48,7 +48,6 @@ export default function Auth() {
 
     try {
       if (isSignUp) {
-        // Validation : Vérifie qu'il y a exactement 10 chiffres
         if (phone.length !== 10) {
           setErrorMessage("Phone number must contain exactly 10 digits.");
           setLoading(false);
@@ -67,7 +66,17 @@ export default function Auth() {
         }, { withCredentials: true });
 
         if (response.data.success) {
-          navigate('/verify-email'); 
+          const userRole = response.data.user.role;
+
+          if (userRole === 'farmer') {
+            navigate('/dash');
+          } else if (userRole === 'buyer') {
+            navigate('/Bdash');
+          } else if (userRole === 'transporter') {
+            navigate('/Tdash');
+          } else {
+            navigate('/');
+          } 
         }
       } else {
         const response = await axios.post(`${API_URL}/login`, { email, password }, {
@@ -75,7 +84,6 @@ export default function Auth() {
         if (response.data.success) {
           const userRole = response.data.user.role;
 
-          // Redirection conditionnelle basée sur le rôle
           if (userRole === 'farmer') {
             navigate('/dash');
           } else if (userRole === 'buyer') {

@@ -58,10 +58,17 @@ export default function MyDeliveries() {
   return (
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
-        <div>
-          <h1 className="text-3xl font-serif font-bold text-[#1A3619]">My Deliveries</h1>
-          <p className="text-[#1A3619]/60 mt-1">Manage your ongoing runs and trip histories.</p> 
-        </div>
+        
+        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
+        <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
+  <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+    <span className="block font-medium text-[#1A3619]/80">Your delivery journey,</span>
+    <span className="block font-bold text-[#D96B40]">tracked step by step! </span>
+  </h1>
+  <p className="text-[#1A3619]/60 mt-3 font-medium text-sm">
+    Manage your ongoing runs, validate your trips, and review your driving history.
+  </p> 
+</div>
 
         {/* TABS BUTTONS */}
         <div className="flex gap-2 bg-[#1A3619]/5 p-1.5 rounded-2xl w-fit">
@@ -86,7 +93,7 @@ export default function MyDeliveries() {
         {/* CONTENT */}
         <div className="space-y-4">
           {(activeTab === 'active' ? activeDeliveries : pastDeliveries).length === 0 ? (
-            <div className="text-center py-12 bg-white rounded-3xl border border-[#1A3619]/10">
+            <div className="text-center py-12 bg-[#FAF9F4] rounded-3xl border border-[#1A3619]/10">
               <Truck className="w-12 h-12 text-[#1A3619]/20 mx-auto mb-3" />
               <p className="text-[#1A3619]/60 font-medium">No trips to display in this category.</p> 
             </div>
@@ -96,11 +103,11 @@ export default function MyDeliveries() {
                 key={delivery._id}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-white p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6"
+                className="bg-[#F6F1E7]  p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6"
               >
                 <div className="space-y-4 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
+                    <span className="font-mono text-xs font-bold bg-[#1A3619]/5 px-2.5 py-1 rounded-md text-gray-600">
                       {delivery.orderNumber}
                     </span>
                     <span className={`text-xs font-bold px-2.5 py-1 rounded-full ${
@@ -112,27 +119,27 @@ export default function MyDeliveries() {
 
                   <h3 className="text-lg font-bold text-[#1A3619]">{delivery.productName} ({delivery.quantity})</h3>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-[#1A3619]/5">
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-[#1A3619] mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400">PICKUP</p> 
+                        <p className="text-[10px] font-bold text-[#1A3619]/50 uppercase">PICKUP</p> 
                         <p className="text-xs text-[#1A3619] font-medium">{delivery.farmerId?.region || "Farm"}</p> 
                       </div>
                     </div>
                     <div className="flex items-start gap-2">
                       <MapPin className="w-4 h-4 text-[#D96B40] mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-[10px] font-bold text-gray-400">DESTINATION</p> 
+                        <p className="text-[10px] font-bold text-[#1A3619]/50 uppercase">DESTINATION</p> 
                         <p className="text-xs text-[#1A3619] font-medium">{delivery.deliveryAddress}</p>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-gray-100 md:pl-6">
+                <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-[#1A3619]/5 md:pl-6">
                   <div className="text-right w-full">
-                    <p className="text-[10px] font-bold text-gray-400">Earnings</p> 
+                    <p className="text-[10px] font-bold text-[#1A3619]/50 uppercase">Earnings</p> 
                     <p className="text-xl font-bold text-[#1A3619]">{(delivery.deliveryFee || 0).toLocaleString()} DZD</p>
                   </div>
 

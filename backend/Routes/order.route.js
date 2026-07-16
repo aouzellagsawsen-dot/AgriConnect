@@ -21,6 +21,10 @@ router.post('/place-order', verifyToken, async (req, res) => {
     if (!buyer) {
       return res.status(404).json({ success: false, message: "Acheteur introuvable" });
     }
+    let finalDeliveryAddress = deliveryAddress;
+    if (!finalDeliveryAddress || finalDeliveryAddress.toLowerCase().includes('waiting')) {
+      finalDeliveryAddress = buyer.address || buyer.region || "Adress not specified";
+    }
 
     const newOrder = new Order({
       farmerId,
@@ -29,7 +33,7 @@ router.post('/place-order', verifyToken, async (req, res) => {
       quantity: quantity || 1,
       orderNumber: `ORD-${Math.floor(1000 + Math.random() * 9000)}`,
       buyerName: buyer.name, 
-      deliveryAddress: deliveryAddress || buyer.region || "Not specified",
+      deliveryAddress: finalDeliveryAddress,
       productName,
       category: category || 'Other',
       totalAmount,
@@ -51,6 +55,7 @@ router.get('/my-orders', verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ buyerId: req.userId })
       .populate('farmerId', 'name email phone region')
+      .populate('transporterId', 'name email phone')
       .sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, orders });
@@ -91,12 +96,17 @@ router.put('/:id/cancel', verifyToken, async (req, res) => {
    2. ROUTES POUR LE FERMIER (FARMER)
    ========================================================================== */
 
-// Récupérer toutes les commandes destinées au fermier connecté
+// Récupérer toutes les commandes destinées au fermier connecté (avec infos transporteur et acheteur)
 router.get('/farmer-orders', verifyToken, async (req, res) => {
   try {
-    const orders = await Order.find({ farmerId: req.userId }).sort({ createdAt: -1 });
+    const orders = await Order.find({ farmerId: req.userId })
+      .populate('transporterId', 'name email phone') 
+      .populate('buyerId', 'name region phone')       
+      .sort({ createdAt: -1 });
+
     res.status(200).json({ success: true, orders });
   } catch (error) {
+    console.error("Erreur lors de la récupération des commandes fermier :", error);
     res.status(500).json({ success: false, message: "Erreur serveur" });
   }
 });
@@ -128,7 +138,7 @@ router.put('/:id/status', verifyToken, async (req, res) => {
         const buyer = await User.findById(order.buyerId);
 
         if (farmer && buyer) {
-          const { distanceKm, deliveryFee } = calculateLogistics(farmer.region, buyer.region);
+          const { distanceKm, deliveryFee } = await calculateLogistics(farmer.region, buyer.region);
           order.distanceKm = distanceKm;
           order.deliveryFee = deliveryFee;
         }

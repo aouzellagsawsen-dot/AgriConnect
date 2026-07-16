@@ -162,72 +162,79 @@ export default function MarketPlace() {
       <div className="h-20 lg:h-0" />
       <main className="p-6 lg:p-10 max-w-7xl mx-auto">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
-          
-          <motion.div variants={item} className="flex flex-col lg:flex-row justify-between gap-6 items-start lg:items-end">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1A3619] tracking-tight">Marketplace</h1>
-              <p className="mt-2 text-[#1A3619]/60 font-medium">Discover fresh products directly from local farmers.</p>
-            </div>
-            
-            {/* 📍 Grille ajustée pour accommoder 4 champs (Catégorie ajoutée) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full gap-3">
-              <div className="relative w-full">
-                <input 
-                  type="text" 
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search products..." 
-                  className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm" 
-                />
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              </div>
+          <motion.div 
+  variants={item} 
+  className="flex flex-col lg:flex-row justify-between gap-6 items-start lg:items-end border-b border-[#1A3619]/10 pb-6"
+>
+  <div>
+    <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
+      <span className="block font-medium text-[#1A3619]/80">Seasonal selections,</span>
+      <span className="block font-bold text-[#D96B40]">the fresh market! </span>
+    </h1>
+    <p className="mt-3 text-[#1A3619]/60 font-medium text-sm">
+      Brimming with seasonal picks, harvested with care by local hands straight for your kitchen.
+    </p>
+  </div>
+  
+  {/* 📍 Grille ajustée pour accommoder 4 champs (Catégorie ajoutée) */}
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full gap-3">
+    <div className="relative w-full">
+      <input 
+        type="text" 
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        placeholder="Search products..." 
+        className="w-full pl-11 pr-4 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm" 
+      />
+      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+    </div>
 
-              {/* 📍 Nouveau menu déroulant pour les Catégories */}
-              <div className="relative w-full">
-                <select 
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
-                >
-                  {categoriesList.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat === "All" ? "All Categories" : cat}
-                    </option>
-                  ))}
-                </select>
-                <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
-              </div>
+    {/* 📍 Nouveau menu déroulant pour les Catégories */}
+    <div className="relative w-full">
+      <select 
+        value={selectedCategory}
+        onChange={(e) => setSelectedCategory(e.target.value)}
+        className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
+      >
+        {categoriesList.map((cat) => (
+          <option key={cat} value={cat}>
+            {cat === "All" ? "All Categories" : cat}
+          </option>
+        ))}
+      </select>
+      <Tag className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
+    </div>
 
-              <div className="relative w-full">
-                <select 
-                  value={selectedWilaya}
-                  onChange={(e) => setSelectedWilaya(e.target.value)}
-                  className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
-                >
-                  {wilayasList.map((wilaya) => (
-                    <option key={wilaya} value={wilaya}>
-                      {wilaya === "All" ? "All Regions" : wilaya}
-                    </option>
-                  ))}
-                </select>
-                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
-              </div>
+    <div className="relative w-full">
+      <select 
+        value={selectedWilaya}
+        onChange={(e) => setSelectedWilaya(e.target.value)}
+        className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
+      >
+        {wilayasList.map((wilaya) => (
+          <option key={wilaya} value={wilaya}>
+            {wilaya === "All" ? "All Regions" : wilaya}
+          </option>
+        ))}
+      </select>
+      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
+    </div>
 
-              <div className="relative w-full">
-                <select 
-                  value={sortOption}
-                  onChange={(e) => setSortOption(e.target.value)}
-                  className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
-                >
-                  <option value="newest">Newest First</option>
-                  <option value="oldest">Oldest First</option>
-                  <option value="price_asc">Price: Low to High</option>
-                  <option value="price_desc">Price: High to Low</option>
-                </select>
-                <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
-              </div>
-            </div>
-          </motion.div>
+    <div className="relative w-full">
+      <select 
+        value={sortOption}
+        onChange={(e) => setSortOption(e.target.value)}
+        className="w-full pl-11 pr-8 py-3 bg-white rounded-2xl border border-[#1A3619]/10 shadow-sm appearance-none focus:outline-none focus:ring-2 focus:ring-[#1A3619]/20 transition-all text-sm text-gray-700 font-medium cursor-pointer"
+      >
+        <option value="newest">Newest First</option>
+        <option value="oldest">Oldest First</option>
+        <option value="price_asc">Price: Low to High</option>
+        <option value="price_desc">Price: High to Low</option>
+      </select>
+      <Filter className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#D96B40]" />
+    </div>
+  </div>
+</motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {filteredAndSortedProducts.length === 0 ? (
@@ -239,7 +246,7 @@ export default function MarketPlace() {
                 const isFavorited = favoriteFarmerIds.includes(prod.farmerId?._id);
 
                 return (
-                  <motion.div variants={item} key={prod._id} className="bg-white rounded-[2rem] border border-[#1A3619]/10 overflow-hidden hover:shadow-lg transition-all group flex flex-col relative">
+                  <motion.div variants={item} key={prod._id} className="bg-[#F6F1E7]  rounded-[2rem] border border-[#1A3619]/10 overflow-hidden hover:shadow-lg transition-all group flex flex-col relative">
                     
                     <button 
                       onClick={() => toggleFavorite(prod.farmerId?._id)}
