@@ -29,6 +29,10 @@ mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log('Connexion à MongoDB réussie !'))
     .catch((err) => console.error('Échec de la connexion à MongoDB :', err));
 
+app.get('/', (req, res) => {
+  res.status(200).send("L'API AgriConnect est en ligne et fonctionne parfaitement ! 🚀");
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/products', productsRoutes);
