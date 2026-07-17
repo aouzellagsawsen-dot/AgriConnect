@@ -8,7 +8,6 @@ import {
 } from 'lucide-react';
 import axios from 'axios';
 
-// 1. AJOUT DES CHEMINS (paths) POUR CHAQUE BOUTON
 const menuGroups = [
   {
     items: [
@@ -24,14 +23,11 @@ export default function Sidebar() {
   const [activeItem, setActiveItem] = useState('home');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Initialisation du hook de navigation
   const navigate = useNavigate();
 
-  // Navigation content (reused for both Desktop and Mobile)
   const NavContent = () => (
     <div className="flex flex-col h-full bg-[#FAF9F4] border-r border-[#1A3619]/10">
       
-      {/* --- LOGO AREA --- */}
       <div className="p-6 md:p-8 flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#1A3619] to-[#3d5a2a] flex items-center justify-center shadow-lg shadow-[#1A3619]/20">
           <Leaf className="w-6 h-6 text-white" />
@@ -46,7 +42,6 @@ export default function Sidebar() {
   </div>
       </div>
 
-      {/* --- NAVIGATION LINKS --- */}
       <div className="flex-1 overflow-y-auto px-4 md:px-6 pb-6 space-y-8 scrollbar-hide">
         {menuGroups.map((group, groupIndex) => (
           <div key={groupIndex}>
@@ -59,9 +54,9 @@ export default function Sidebar() {
                   <motion.button
                     key={item.id}
                     onClick={() => {
-                      setActiveItem(item.id);     // Met à jour l'état visuel actif
-                      setIsMobileOpen(false);     // Ferme le menu sur mobile
-                      navigate(item.path);        // 2. REDIRECTION VERS LA BONNE PAGE
+                      setActiveItem(item.id);     
+                      setIsMobileOpen(false);     
+                      navigate(item.path);        
                     }}
                     whileHover={{ x: isActive ? 0 : 4 }}
                     className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl transition-all duration-300 ${
@@ -75,7 +70,6 @@ export default function Sidebar() {
                       <span className="font-medium text-sm md:text-base">{item.label}</span>
                     </div>
                     
-                    {/* Notification Badge */}
                     {item.badge && (
                       <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
                         isActive ? 'bg-[#D96B40] text-white' : 'bg-[#D96B40]/10 text-[#D96B40]'
@@ -91,7 +85,6 @@ export default function Sidebar() {
         ))}
       </div>
 
-      {/* --- USER PROFILE & LOGOUT --- */}
       <div className="p-4 md:p-6 border-t border-[#1A3619]/10">
         <button onClick={handleLogout} 
           className="w-full flex items-center gap-3 p-3 rounded-2xl text-[#1A3619]/70 hover:bg-red-50 hover:text-red-600 transition-colors duration-300 group">
@@ -104,9 +97,8 @@ export default function Sidebar() {
 
   const handleLogout = async () => {
     try {
-      // Appelle la route backend de déconnexion (ajuste l'URL si besoin)
       const response = await axios.get('http://localhost:3000/api/auth/logout', { 
-        withCredentials: true // Important pour que le navigateur supprime le cookie
+        withCredentials: true
       });
 
       if (response.data.success) {
@@ -124,7 +116,6 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* === MOBILE TOGGLE BUTTON === */}
       <div className="lg:hidden fixed top-0 left-0 w-full bg-[#FAF9F4] border-b border-[#1A3619]/10 z-40 p-4 flex items-center justify-between shadow-sm">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg bg-[#1A3619] flex items-center justify-center">
@@ -142,16 +133,13 @@ export default function Sidebar() {
         </button>
       </div>
 
-      {/* === DESKTOP SIDEBAR === */}
       <div className="hidden lg:block w-[300px] h-screen fixed top-0 left-0 z-30">
         <NavContent />
       </div>
 
-      {/* === MOBILE DRAWER SIDEBAR === */}
       <AnimatePresence>
         {isMobileOpen && (
           <>
-            {/* Overlay (Dark background) */}
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -160,7 +148,6 @@ export default function Sidebar() {
               className="fixed inset-0 bg-[#1A3619]/60 backdrop-blur-sm z-50 lg:hidden"
             />
 
-            {/* Mobile Sidebar */}
             <motion.div
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
@@ -168,7 +155,6 @@ export default function Sidebar() {
               transition={{ type: "spring", bounce: 0, duration: 0.4 }}
               className="fixed top-0 left-0 w-[85%] max-w-[320px] h-screen z-50 lg:hidden shadow-2xl shadow-black/30"
             >
-              {/* Close Button */}
               <button 
                 onClick={() => setIsMobileOpen(false)}
                 className="absolute top-6 right-4 p-2 rounded-full bg-white/50 backdrop-blur border border-[#1A3619]/10 text-[#1A3619] hover:bg-white z-50 shadow-sm"

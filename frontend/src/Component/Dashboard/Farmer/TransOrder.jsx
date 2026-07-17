@@ -30,7 +30,6 @@ export default function TransOrders() {
     }
   };
 
-  // Le fermier accepte la commande et lance la recherche de transporteurs
   const handleAcceptOrder = async (orderId) => {
     try {
       const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
@@ -53,12 +52,11 @@ export default function TransOrders() {
     return () => clearInterval(interval);
   }, []);
 
-  // Filtrage des commandes selon l'onglet actif
   const filteredOrders = orders.filter(order => {
     if (activeTab === 'pending') return order.status === 'New' || order.status === 'Preparing';
     if (activeTab === 'transit') return order.status === 'In Transit';
     if (activeTab === 'delivered') return order.status === 'Delivered';
-    return true; // 'all'
+    return true; 
   });
 
   const getStatusBadge = (status) => {
@@ -91,7 +89,6 @@ export default function TransOrders() {
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* HEADER */}
         <div className="border-b border-[#1A3619]/10 pb-6 mb-6">
   <h1 className="text-3xl font-serif text-[#1A3619] tracking-tight leading-snug">
     <span className="block font-medium text-[#1A3619]/80">Sown with love,</span>
@@ -109,7 +106,6 @@ export default function TransOrders() {
           </div>
         )}
 
-        {/* TAB NAVIGATION */}
         <div className="flex flex-wrap gap-2 bg-[#1A3619]/5 p-1.5 rounded-2xl w-fit">
           {[
             { id: 'all', label: `All (${orders.length})` },
@@ -129,7 +125,6 @@ export default function TransOrders() {
           ))}
         </div>
 
-        {/* ORDERS LIST */}
         <div className="space-y-6">
           {filteredOrders.length === 0 ? (
             <div className="text-center py-16 bg-white rounded-3xl border border-[#1A3619]/10">
@@ -159,7 +154,6 @@ export default function TransOrders() {
 
                     <div className="flex flex-col lg:flex-row justify-between gap-6">
                       
-                      {/* Left Block: Order Info & Destination */}
                       <div className="space-y-4 flex-1">
                         <div className="flex flex-wrap items-center gap-3">
                           <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
@@ -175,7 +169,6 @@ export default function TransOrders() {
                           <p className="text-sm font-bold text-[#D96B40] mt-1">Total Payout: {order.formattedTotal || `${order.totalAmount} DZD`}</p>
                         </div>
 
-                        {/* ROUTING INFO */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-gray-100">
                           <div className="flex items-start gap-2">
                             <MapPin className="w-4 h-4 text-[#1A3619] shrink-0 mt-0.5" />
@@ -196,16 +189,13 @@ export default function TransOrders() {
                         </div>
                       </div>
 
-                      {/* Right Block: Logistics Tracking & Farmer Actions */}
                       <div className="flex flex-col justify-between lg:w-72 lg:border-l border-gray-100 lg:pl-6 pt-4 lg:pt-0">
                         
-                        {/* 1. Transporter Info Area */}
                         <div className="bg-[#FAF9F4] p-4 rounded-2xl border border-[#1A3619]/5 space-y-2">
                           <h4 className="text-xs font-bold text-[#1A3619]/70 uppercase tracking-wider flex items-center gap-1.5">
                             <Truck className="w-3.5 h-3.5 text-[#D96B40]" /> Logistic Partner
                           </h4>
                           
-                          {/* Vérification améliorée pour gérer name, ou firstName/lastName */}
                           {order.transporterId && typeof order.transporterId === 'object' && (order.transporterId.name || order.transporterId.firstName) ? (
                             <div className="space-y-1.5">
                               <p className="text-sm font-bold text-[#1A3619] flex items-center gap-1.5">
@@ -239,7 +229,6 @@ export default function TransOrders() {
                           )}
                         </div>
 
-                        {/* 2. Farmer Action Buttons */}
                         <div className="mt-4">
                           {order.status === 'New' && (
                             <button

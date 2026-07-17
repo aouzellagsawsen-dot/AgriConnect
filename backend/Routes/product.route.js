@@ -5,6 +5,7 @@ import uploadCloud from '../config/cloudinary.js';
 
 const router = express.Router();
 
+// Créer un produit
 router.post('/', verifyToken, uploadCloud.single('image'), async (req, res) => {
   try {
     const { name, category, qty, price, date } = req.body;
@@ -14,7 +15,6 @@ router.post('/', verifyToken, uploadCloud.single('image'), async (req, res) => {
       imageUrl = req.file.path;
     }
 
-    // On utilise directement req.userId grâce à votre middleware !
     const newProduct = new Product({
       farmerId: req.userId, 
       name,
@@ -33,27 +33,27 @@ router.post('/', verifyToken, uploadCloud.single('image'), async (req, res) => {
     res.status(500).json({ success: false, message: "Erreur serveur lors de la sauvegarde." });
   }
 });
+
+// Modifier un produit
 router.put('/:id', verifyToken, async (req, res) => {
   try {
     const { name, category, qty, price, date } = req.body;
     const productId = req.params.id;
 
-    // 🔒 Sécurité : On met à jour uniquement si le produit appartient au fermier connecté (req.userId)
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: productId, farmerId: req.userId }, 
       { 
         $set: { 
           name, 
           category, 
-          qty: String(qty),    // On s'assure de stocker en String conformément au schéma
-          price: String(price), // On s'assure de stocker en String conformément au schéma
+          qty: String(qty),    
+          price: String(price), 
           date 
         } 
       },
-      { new: true } // Requis pour renvoyer le produit mis à jour à ton React
+      { new: true } 
     );
 
-    // Si le produit n'existe pas ou n'appartient pas au fermier
     if (!updatedProduct) {
       return res.status(404).json({ 
         success: false, 
@@ -61,8 +61,7 @@ router.put('/:id', verifyToken, async (req, res) => {
       });
     }
 
-    // On renvoie une réponse positive structurée exactement comme le frontend l'attend
-    res.status(200).json({ success: true, product: updatedProduct });
+   res.status(200).json({ success: true, product: updatedProduct });
 
   } catch (error) {
     console.error("Erreur lors de la mise à jour du produit:", error);
@@ -70,9 +69,9 @@ router.put('/:id', verifyToken, async (req, res) => {
   }
 });
 
+// Tout afficher
 router.get('/all', verifyToken, async (req, res) => {
   try {
-    // On récupère tous les produits et on "populate" pour avoir le nom et la région de l'agriculteur
     const products = await Product.find().populate('farmerId', 'name region country');
     res.status(200).json({ success: true, products });
   } catch (error) {
@@ -80,6 +79,7 @@ router.get('/all', verifyToken, async (req, res) => {
   }
 });
 
+// Supprimer un produit
 router.delete('/:id', verifyToken, async (req, res) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);

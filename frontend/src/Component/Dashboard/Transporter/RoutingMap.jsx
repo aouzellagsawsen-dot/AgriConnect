@@ -39,7 +39,6 @@ export default function RoutingMap() {
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
         <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
   <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
     <span className="block font-medium text-[#1A3619]/80">Your navigation center,</span>
@@ -58,7 +57,6 @@ export default function RoutingMap() {
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* ROUTE SELECTOR */}
             <div className="space-y-4">
               <h3 className="font-bold text-[#1A3619] text-sm uppercase tracking-wider">Shipments in Transit</h3>
               {activeDeliveries.map((delivery) => (
@@ -80,7 +78,6 @@ export default function RoutingMap() {
               ))}
             </div>
 
-            {/* MAPPING SYSTEM */}
             <div className="lg:col-span-2 space-y-6">
               {selectedRoute && (
                 <>
@@ -96,10 +93,8 @@ export default function RoutingMap() {
                       </div>
                     </div>
 
-                    {/* DELIVERY STEPS */}
                     <div className="relative space-y-8 pl-6 border-l-2 border-dashed border-emerald-600/30">
                       
-                      {/* Step 1 : Pickup */}
                       <div className="relative">
                         <div className="absolute -left-9 top-0.5 bg-emerald-600 text-white rounded-full p-1 shadow-md">
                           <MapPin className="w-4 h-4" />
@@ -111,7 +106,6 @@ export default function RoutingMap() {
                         </div>
                       </div>
 
-                      {/* Intermediate step : Transit */}
                       <div className="relative py-2">
                         <div className="absolute -left-9 top-2.5 bg-amber-500 text-white rounded-full p-1 shadow-md">
                           <Truck className="w-4 h-4" />
@@ -122,7 +116,6 @@ export default function RoutingMap() {
                         </div>
                       </div>
 
-                      {/* Step 2 : Delivery */}
                       <div className="relative">
                         <div className="absolute -left-9 top-0.5 bg-red-500 text-white rounded-full p-1 shadow-md">
                           <MapPin className="w-4 h-4" />

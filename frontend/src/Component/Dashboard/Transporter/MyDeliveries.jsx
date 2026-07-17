@@ -4,7 +4,7 @@ import { Truck, CheckCircle2, Navigation, MapPin, Loader2 } from 'lucide-react';
 import axios from 'axios';
 
 export default function MyDeliveries() {
-  const [activeTab, setActiveTab] = useState('active'); // 'active' or 'history'
+  const [activeTab, setActiveTab] = useState('active'); 
   const [deliveries, setDeliveries] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -59,7 +59,6 @@ export default function MyDeliveries() {
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
         <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
   <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
     <span className="block font-medium text-[#1A3619]/80">Your delivery journey,</span>
@@ -70,7 +69,6 @@ export default function MyDeliveries() {
   </p> 
 </div>
 
-        {/* TABS BUTTONS */}
         <div className="flex gap-2 bg-[#1A3619]/5 p-1.5 rounded-2xl w-fit">
           <button
             onClick={() => setActiveTab('active')}
@@ -90,7 +88,6 @@ export default function MyDeliveries() {
           </button>
         </div>
 
-        {/* CONTENT */}
         <div className="space-y-4">
           {(activeTab === 'active' ? activeDeliveries : pastDeliveries).length === 0 ? (
             <div className="text-center py-12 bg-[#FAF9F4] rounded-3xl border border-[#1A3619]/10">

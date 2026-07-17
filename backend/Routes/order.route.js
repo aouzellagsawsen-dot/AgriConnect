@@ -7,16 +7,13 @@ import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router = express.Router();
 
-/* ==========================================================================
-   1. ROUTES POUR L'ACHETEUR (BUYER)
-   ========================================================================== */
+ // ROUTES POUR L'ACHETEUR (BUYER)
 
-// Passer une commande (Acheteur) - VERSION UNIQUE ET SÉCURISÉE
+ // Passer une commande 
 router.post('/place-order', verifyToken, async (req, res) => {
   try {
     const { farmerId, productId, quantity, productName, category, totalAmount, formattedTotal, deliveryAddress } = req.body;
     
-    // Récupérer les informations de l'acheteur connecté
     const buyer = await User.findById(req.userId);
     if (!buyer) {
       return res.status(404).json({ success: false, message: "Acheteur introuvable" });
@@ -50,7 +47,7 @@ router.post('/place-order', verifyToken, async (req, res) => {
   }
 });
 
-// Récupérer toutes les commandes de l'acheteur connecté (avec infos du fermier)
+// Récupérer toutes les commandes de l'acheteur connecté
 router.get('/my-orders', verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ buyerId: req.userId })
@@ -65,7 +62,7 @@ router.get('/my-orders', verifyToken, async (req, res) => {
   }
 });
 
-// L'acheteur annule sa propre commande (uniquement si le statut est encore 'New')
+// L'acheteur annule sa propre commande
 router.put('/:id/cancel', verifyToken, async (req, res) => {
   try {
     const order = await Order.findOne({ _id: req.params.id, buyerId: req.userId });
@@ -91,12 +88,9 @@ router.put('/:id/cancel', verifyToken, async (req, res) => {
   }
 });
 
-
-/* ==========================================================================
-   2. ROUTES POUR LE FERMIER (FARMER)
-   ========================================================================== */
-
-// Récupérer toutes les commandes destinées au fermier connecté (avec infos transporteur et acheteur)
+ // ROUTES POUR LE FERMIER (FARMER)
+  
+// Récupérer toutes les commandes destinées au fermier connecté
 router.get('/farmer-orders', verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ farmerId: req.userId })
@@ -111,12 +105,12 @@ router.get('/farmer-orders', verifyToken, async (req, res) => {
   }
 });
 
-// Mise à jour du statut (Acceptation par le fermier OU livraison finale par le transporteur)
+// Mise à jour du statut
 router.put('/:id/status', verifyToken, async (req, res) => {
   try {
     const { status } = req.body; 
     
-    // MODIFICATION ICI : On autorise le Fermier OU le Transporteur affecté à modifier le statut
+    // On autorise le Fermier ou le Transporteur affecté à modifier le statut
     const order = await Order.findOne({ 
       _id: req.params.id, 
       $or: [
@@ -129,10 +123,9 @@ router.put('/:id/status', verifyToken, async (req, res) => {
       return res.status(404).json({ success: false, message: "Commande introuvable ou non autorisée" });
     }
 
-    // 👉 GESTION DU PASSAGE AU STATUT "PREPARING" (uniquement déclenché par le fermier au début)
     if (status === 'Preparing' && order.status === 'New') {
 
-      // A. CALCUL DE LA LOGISTIQUE (Distance et frais de livraison)
+      // CALCUL Distance et frais de livraison
       try {
         const farmer = await User.findById(order.farmerId);
         const buyer = await User.findById(order.buyerId);
@@ -143,10 +136,9 @@ router.put('/:id/status', verifyToken, async (req, res) => {
           order.deliveryFee = deliveryFee;
         }
       } catch (logisticsError) {
-        console.error("⚠️ Erreur lors du calcul de la logistique :", logisticsError);
+        console.error(" Erreur lors du calcul de la logistique :", logisticsError);
       }
 
-      // B. SÉCURISATION ET DÉDUCTION DES STOCKS 
       if (order.productId && order.quantity) {
         const product = await Product.findById(order.productId);
         
@@ -155,17 +147,15 @@ router.put('/:id/status', verifyToken, async (req, res) => {
           const orderQty = parseFloat(order.quantity) || 0;
           const newStock = currentStock - orderQty;
           
-          // Sauvegarde sécurisée sans descendre en dessous de 0
           product.qty = newStock >= 0 ? newStock.toString() : "0"; 
           await product.save();
         }
       } else {
-        console.log("⚠️ Attention: Commande sans productId. Le stock n'a pas été déduit.");
+        console.log("Attention: Commande sans productId. Le stock n'a pas été déduit.");
       }
     } 
 
-    // Application du nouveau statut et sauvegarde
-    order.status = status;
+   order.status = status;
     await order.save();
     
     res.json({ success: true, order });
@@ -176,11 +166,9 @@ router.put('/:id/status', verifyToken, async (req, res) => {
 });
 
 
-/* ==========================================================================
-   3. ROUTES POUR LE TRANSPORTEUR (TRANSPORTER)
-   ========================================================================== */
-
-// AJOUT ICI : Récupérer toutes les livraisons (actives & terminées) affectées au transporteur connecté[cite: 33]
+// ROUTES POUR LE TRANSPORTEUR (TRANSPORTER)
+  
+// Récupérer toutes les livraisons  affectées au transporteur connecté
 router.get('/my-deliveries', verifyToken, async (req, res) => {
   try {
     const orders = await Order.find({ transporterId: req.userId })
@@ -205,15 +193,13 @@ const getAvailableJobs = async (req, res) => {
     .populate('farmerId', 'name region')
     .populate('buyerId', 'name region');
 
-    // On renvoie un format compatible avec toutes les variantes du frontend
-    res.status(200).json({ success: true, jobs, offers: jobs });
+   res.status(200).json({ success: true, jobs, offers: jobs });
   } catch (error) {
     console.error("Erreur de récupération des livraisons disponibles :", error);
     res.status(500).json({ success: false, message: "Erreur lors de la récupération des offres." });
   }
 };
 
-// Double déclaration de route pour gérer à la fois '/available-offers' et '/available-jobs'
 router.get('/available-offers', verifyToken, getAvailableJobs);
 router.get('/available-jobs', verifyToken, getAvailableJobs);
 
@@ -228,7 +214,7 @@ const acceptJob = async (req, res) => {
       return res.status(400).json({ success: false, message: "Déjà prise en charge par un autre transporteur" });
     }
 
-    order.transporterId = req.userId; // ID du transporteur connecté issu du JWT token
+    order.transporterId = req.userId; 
     order.status = 'In Transit'; 
     await order.save();
 
@@ -239,7 +225,6 @@ const acceptJob = async (req, res) => {
   }
 };
 
-// Double déclaration de route pour gérer les deux endpoints du frontend
 router.put('/:id/accept-delivery', verifyToken, acceptJob);
 router.put('/:id/accept-job', verifyToken, acceptJob);
 

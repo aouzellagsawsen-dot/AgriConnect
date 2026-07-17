@@ -10,17 +10,14 @@ import {
 export default function MyInventory() {
   const navigate = useNavigate();
 
-  // États principaux
   const [inventory, setInventory] = useState([]);
   const [filteredInventory, setFilteredInventory] = useState([]);
   const [currency, setCurrency] = useState("DZD");
   const [selectedCategory, setSelectedCategory] = useState("All");
   
-  // États de chargement et d'erreur
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // États pour la modification (Edit)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingProduct, setEditingProduct] = useState({
@@ -32,10 +29,8 @@ export default function MyInventory() {
     date: ''
   });
 
-  // Catégories disponibles pour le filtre
   const categories = ["All", "Vegetables", "Fruits", "Grains", "Dairy"];
 
-  // 🔄 RÉCUPÉRATION DES DONNÉES
   useEffect(() => {
     const fetchInventory = async () => {
       try {
@@ -46,7 +41,6 @@ export default function MyInventory() {
         if (response.data.success) {
           const { country, inventory: dbInventory } = response.data.data;
           
-          // Détection de la devise
           let detectedCurrency = "Autre"; 
           if (country) {
             const cleanLocation = country.toLowerCase().trim();
@@ -58,7 +52,6 @@ export default function MyInventory() {
           }
           setCurrency(detectedCurrency);
 
-          // Tri du plus récent au plus ancien basé sur la date
           const sortedInventory = dbInventory.sort((a, b) => new Date(b.date) - new Date(a.date));
           
           setInventory(sortedInventory);
@@ -75,7 +68,6 @@ export default function MyInventory() {
     fetchInventory();
   }, []);
 
-  // 🔎 FILTRAGE PAR CATÉGORIE
   useEffect(() => {
     if (selectedCategory === "All") {
       setFilteredInventory(inventory);
@@ -84,7 +76,6 @@ export default function MyInventory() {
     }
   }, [selectedCategory, inventory]);
 
-  // 🗑️ SUPPRESSION
   const handleDeleteProduct = async (productId) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this product?");
     if (!isConfirmed) return;
@@ -104,7 +95,6 @@ export default function MyInventory() {
     }
   };
 
-  // ✏️ GESTION DE L'ÉDITION
   const openEditModal = (product) => {
     setEditingProduct({
       _id: product._id,
@@ -134,7 +124,6 @@ export default function MyInventory() {
         setIsEditModalOpen(false);
         const updatedInventory = inventory.map(prod => prod._id === editingProduct._id ? response.data.product : prod);
         
-        // Retrier après mise à jour au cas où la date change
         const sortedUpdated = updatedInventory.sort((a, b) => new Date(b.date) - new Date(a.date));
         setInventory(sortedUpdated);
         alert("Produit mis à jour avec succès !");
@@ -147,7 +136,6 @@ export default function MyInventory() {
     }
   };
 
-  // Animations Framer Motion
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } };
 
@@ -161,7 +149,6 @@ export default function MyInventory() {
       <main className="p-6 lg:p-10 max-w-7xl mx-auto">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
           
-          {/* HEADER & RETOUR */}
           <motion.div 
   variants={item} 
   className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#1A3619]/10 pb-6"
@@ -177,7 +164,6 @@ export default function MyInventory() {
   </div>
 </motion.div>
 
-          {/* BARRE DE FILTRES */}
           <motion.div variants={item} className="bg-[#F6F1E7] p-2 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-wrap gap-2 items-center">
             {categories.map((cat) => (
               <button
@@ -197,7 +183,6 @@ export default function MyInventory() {
             </div>
           </motion.div>
 
-          {/* GRILLE D'INVENTAIRE */}
           <motion.div variants={item}>
             {filteredInventory.length === 0 ? (
               <div className="bg-white border border-[#1A3619]/10 rounded-[2rem] p-16 text-center">
@@ -249,7 +234,6 @@ export default function MyInventory() {
         </motion.div>
       </main>
 
-      {/* === MODAL : EDIT PRODUCT === */}
       <AnimatePresence>
         {isEditModalOpen && (
           <>

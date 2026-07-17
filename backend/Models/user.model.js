@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['farmer', 'buyer', 'transporter'], // Restreint aux rôles de ton Front
+        enum: ['farmer', 'buyer', 'transporter'], 
         default: 'farmer'
     },
     country: {

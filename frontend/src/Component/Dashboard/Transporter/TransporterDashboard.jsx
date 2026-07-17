@@ -15,13 +15,11 @@ export default function TransporterDashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
-  // État pour le nom du transporteur (initialisé vide)
   const [transporterName, setTransporterName] = useState("");
 
   const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } };
   const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } };
 
-  // 1. Fonction pour récupérer le nom du transporteur via le cookie de session
   const fetchUserName = async () => {
     try {
       const response = await axios.get('http://localhost:3000/api/auth/check-auth', {
@@ -35,7 +33,6 @@ export default function TransporterDashboard() {
     }
   };
 
-  // 2. Fonction pour récupérer les données du dashboard
   const fetchDashboardData = async () => {
     try {
       setIsLoading(true);
@@ -84,7 +81,6 @@ export default function TransporterDashboard() {
     }
   };
 
-  // Lancement des deux requêtes au chargement
   useEffect(() => {
     fetchUserName();
     fetchDashboardData();
@@ -139,7 +135,6 @@ export default function TransporterDashboard() {
       <main className="p-6 lg:p-10 max-w-7xl mx-auto">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-8">
           
-          {/* HEADER HUMANISÉ */}
           <motion.div variants={item} className="border-b border-[#1A3619]/10 pb-6 mb-8">
   <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
     <span className="block font-medium text-[#1A3619]/80">Welcome to the road,</span>
@@ -150,7 +145,6 @@ export default function TransporterDashboard() {
   </p>
 </motion.div>
 
-          {/* STATS CARDS */}
           <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-[#4A783A] p-6 rounded-[2rem] shadow-sm flex flex-col justify-between min-h-[150px] text-white">
               <div className="flex justify-between items-start">
@@ -189,7 +183,6 @@ export default function TransporterDashboard() {
             </div>
           </motion.div>
 
-          {/* CHART & STATS */}
           <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-[#F6F1E7] p-6 md:p-8 rounded-[2rem] border border-[#1A3619]/15 shadow-sm space-y-4">
               <div className="flex items-center justify-between mb-2">
@@ -223,7 +216,6 @@ export default function TransporterDashboard() {
             </div>
           </motion.div>
 
-          {/* ACTIVE DELIVERIES LIST */}
           <motion.div variants={item} className="space-y-4">
             <h2 className="text-2xl font-serif font-bold text-[#1A3619] mb-4">Active Shipments in Progress</h2>
             {activeDeliveries.length === 0 ? (
@@ -237,7 +229,6 @@ export default function TransporterDashboard() {
                   key={delivery._id}
                   className="bg-[#F6F1E7]  p-6 rounded-3xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6 hover:shadow-md transition-shadow duration-300"
                 >
-                  {/* Details */}
                   <div className="space-y-4 flex-1">
                     <div className="flex items-center gap-3">
                       <span className="font-mono text-xs font-bold bg-gray-100 px-2.5 py-1 rounded-md text-gray-600">
@@ -253,7 +244,6 @@ export default function TransporterDashboard() {
                       <p className="text-xs text-[#1A3619]/60">Farmer: {delivery.farmerId?.name || "Unknown Farmer"}</p>
                     </div>
 
-                    {/* Route Traveled */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 border-t border-gray-100">
                       <div className="flex items-start gap-2">
                         <MapPin className="w-4 h-4 text-[#1A3619] shrink-0 mt-0.5" />
@@ -272,7 +262,6 @@ export default function TransporterDashboard() {
                     </div>
                   </div>
 
-                  {/* Pricing and Action Button */}
                   <div className="flex flex-col justify-between items-end md:w-56 md:border-l border-gray-100 md:pl-6 pt-4 md:pt-0">
                     <div className="text-right w-full">
                       <span className="text-[10px] font-bold text-gray-400 uppercase">Your Delivery Payout</span>

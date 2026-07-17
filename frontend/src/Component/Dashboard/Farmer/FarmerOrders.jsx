@@ -11,7 +11,6 @@ export default function FarmerOrders() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
-  // Récupérer toutes les commandes du fermier
   useEffect(() => {
     const fetchOrders = async () => {
       try {
@@ -30,9 +29,7 @@ export default function FarmerOrders() {
     fetchOrders();
   }, []);
 
-  // Changer le statut d'une commande
   const handleOrderStatus = async (orderId, newStatus) => {
-    // Si on accepte la commande, on prévient l'utilisateur que le stock va baisser
     if (newStatus === 'Preparing') {
       const confirm = window.confirm("By accepting this order, the requested quantity will be automatically deducted from your inventory. Continue?");
       if (!confirm) return;
@@ -72,7 +69,6 @@ export default function FarmerOrders() {
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-7xl mx-auto space-y-8">
         
-        {/* HEADER */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#1A3619]/10 pb-6">
   <div>
     <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
@@ -84,7 +80,6 @@ export default function FarmerOrders() {
     </p>
   </div>
   
-  {/* Search Bar */}
   <div className="relative w-full md:w-auto">
     <input 
       type="text" 
@@ -97,7 +92,6 @@ export default function FarmerOrders() {
   </div>
 </div>
 
-        {/* ORDERS LIST */}
         <div className="grid gap-4">
           {filteredOrders.length === 0 ? (
             <div className="text-center py-12 bg-[#F6F1E7]/40 rounded-2xl border border-[#1A3619]/10">
@@ -112,7 +106,6 @@ export default function FarmerOrders() {
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-[#F6F1E7]/50 p-6 rounded-[2rem] border border-[#1A3619]/10 shadow-sm flex flex-col xl:flex-row gap-6 justify-between items-start xl:items-center"
               >
-                {/* Left Column: Order Number, Date & Product */}
                 <div className="space-y-2 flex-1">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-xs font-bold bg-[#1A3619]/5 px-2.5 py-1 rounded-md text-[#1A3619]/70">
@@ -129,7 +122,6 @@ export default function FarmerOrders() {
                   </div>
                 </div>
 
-                {/* Middle Column: Buyer & Address Card with high contrast */}
                 <div className="flex-1 w-full bg-white/80 p-4 rounded-2xl border border-[#1A3619]/5">
                   <p className="text-sm font-bold text-[#1A3619] mb-1">Buyer: {order.buyerName}</p>
                   <div className="flex items-start gap-1.5 text-xs text-[#1A3619]/70">
@@ -138,7 +130,6 @@ export default function FarmerOrders() {
                   </div>
                 </div>
 
-                {/* Right Column: Clickable Horizontal Buttons */}
                 <div className="flex flex-col xl:items-end gap-2 w-full xl:w-auto shrink-0">
                   <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 block">
                     Update Status

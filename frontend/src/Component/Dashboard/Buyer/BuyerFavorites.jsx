@@ -9,29 +9,24 @@ import {
 export default function BuyerFavorites() {
   const [isLoading, setIsLoading] = useState(true);
   const [favorites, setFavorites] = useState([]);
-  const [allProducts, setAllProducts] = useState([]); // Stores all products for filtering[cite: 31]
+  const [allProducts, setAllProducts] = useState([]); 
   
-  // States for the farmer's products modal[cite: 31]
   const [selectedFarmer, setSelectedFarmer] = useState(null);
   const [isProductsModalOpen, setIsProductsModalOpen] = useState(false);
 
-  // States to place an order from the modal[cite: 31]
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [orderQty, setOrderQty] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Fetch favorites and all products on load[cite: 31]
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Fetch favorite farmers[cite: 31]
         const favRes = await axios.get('http://localhost:3000/api/buyers/favorites', { withCredentials: true });
         if (favRes.data.success) {
           setFavorites(favRes.data.favorites);
         }
 
-        // 2. Fetch all products to filter by farmer[cite: 31]
         const prodRes = await axios.get('http://localhost:3000/api/products/all', { withCredentials: true });
         if (prodRes.data.success) {
           setAllProducts(prodRes.data.products);
@@ -45,7 +40,6 @@ export default function BuyerFavorites() {
     fetchData();
   }, []);
 
-  // Remove from favorites[cite: 31]
   const removeFavorite = async (farmerId) => {
     try {
       const res = await axios.post('http://localhost:3000/api/buyers/favorites/toggle', { farmerId }, { withCredentials: true });
@@ -57,25 +51,21 @@ export default function BuyerFavorites() {
     }
   };
 
-  // Filter products belonging only to the selected farmer[cite: 31]
   const farmerProducts = selectedFarmer 
     ? allProducts.filter(prod => prod.farmerId?._id === selectedFarmer._id)
     : [];
 
-  // Open products modal[cite: 31]
   const handleViewProducts = (farmer) => {
     setSelectedFarmer(farmer);
     setIsProductsModalOpen(true);
   };
 
-  // Open order modal for a specific product[cite: 31]
   const handleOpenOrder = (product) => {
     setSelectedProduct(product);
     setOrderQty(1);
     setIsOrderModalOpen(true);
   };
 
-  // Submit order[cite: 31]
   const handleConfirmOrder = async (e) => {
     e.preventDefault();
     if (!selectedProduct || orderQty <= 0) return;
@@ -151,7 +141,7 @@ export default function BuyerFavorites() {
                     key={farmer._id} 
                     className="bg-[#F6F1E7]  rounded-[2rem] border border-[#1A3619]/10 p-6 hover:shadow-lg transition-all group relative flex flex-col justify-between"
                   >
-                    {/* Remove from favorites */}
+          
                     <button 
                       onClick={() => removeFavorite(farmer._id)}
                       className="absolute top-6 right-6 p-2.5 rounded-full bg-red-50 hover:bg-red-100 text-[#D96B40] transition-colors"
@@ -161,18 +151,18 @@ export default function BuyerFavorites() {
                     </button>
 
                     <div>
-                      {/* Logo / Icon */}
+                     
                       <div className="w-14 h-14 rounded-2xl bg-[#1A3619]/5 flex items-center justify-center mb-5">
                         <Store className="w-7 h-7 text-[#D96B40]" />
                       </div>
 
-                      {/* Info */}
+                      
                       <h3 className="font-serif text-2xl font-bold text-[#1A3619] mb-1">{farmer.name}</h3>
                       <p className="text-sm font-semibold text-[#D96B40] flex items-center gap-1.5 mb-6">
                         <MapPin className="w-4 h-4" /> {farmer.region || "No Region Specified"}
                       </p>
 
-                      {/* Contact Details */}
+                     
                       <div className="space-y-3 pt-4 border-t border-[#1A3619]/5">
                         <div className="flex items-center gap-3 text-[#1A3619]/70 text-sm">
                           <Phone className="w-4 h-4 text-[#1A3619]/40" />
@@ -185,7 +175,7 @@ export default function BuyerFavorites() {
                       </div>
                     </div>
 
-                    {/* Full width Button */}
+                    
                     <div className="mt-8">
                       <button 
                         onClick={() => handleViewProducts(farmer)}
@@ -203,9 +193,6 @@ export default function BuyerFavorites() {
         </motion.div>
       </main>
 
-      {/* ========================================== */}
-      {/* MODAL 1: FARMER'S PRODUCTS LIST */}
-      {/* ========================================== */}
       <AnimatePresence>
         {isProductsModalOpen && selectedFarmer && (
           <>
@@ -267,9 +254,6 @@ export default function BuyerFavorites() {
         )}
       </AnimatePresence>
 
-      {/* ========================================== */}
-      {/* MODAL 2: ORDER CONFIRMATION */}
-      {/* ========================================== */}
       <AnimatePresence>
         {isOrderModalOpen && selectedProduct && (
           <>

@@ -11,18 +11,15 @@ import {
 export default function Dashboard() {
   const navigate = useNavigate();
 
-  // États pour stocker les données dynamiques
   const [farmerName, setFarmerName] = useState(""); 
   const [recentOrders, setRecentOrders] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [stats, setStats] = useState([]);
   const [currency, setCurrency] = useState("DZD");
 
-  // États pour le cycle de vie
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // États pour le modal d'ajout de produit
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [newProduct, setNewProduct] = useState({
@@ -34,7 +31,6 @@ export default function Dashboard() {
     image: null
   });
 
-  // États pour la modification de produit
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState({
     _id: '',
@@ -69,7 +65,6 @@ export default function Dashboard() {
     setIsEditModalOpen(true);
   };
 
-  // Fonction pour mettre à jour les cartes KPI avec la bonne devise
   const updateKpiStats = (currentInventory, backendRevenue, pendingCount, currentCurrency = "DZD") => {
     const totalProductsCount = currentInventory.length;
 
@@ -103,7 +98,6 @@ export default function Dashboard() {
     ]);
   };
 
-  // Envoi de l'ajout
   const handleAddHarvest = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -139,7 +133,6 @@ export default function Dashboard() {
     }
   };
 
-  // Mise à jour du statut d'une commande
   const handleOrderStatus = async (orderId, newStatus) => {
     try {
       const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
@@ -158,7 +151,6 @@ export default function Dashboard() {
     }
   };
 
-  // Envoi des modifications (Edit)
   const handleUpdateProduct = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -183,7 +175,6 @@ export default function Dashboard() {
     }
   };
 
-  // 🗑️ NOUVEAU : Fonction pour supprimer un produit
   const handleDeleteProduct = async (productId) => {
     const isConfirmed = window.confirm("Are you sure you want to delete this product from the database?");
     if (!isConfirmed) return;
@@ -194,11 +185,9 @@ export default function Dashboard() {
       });
 
       if (response.data.success) {
-        // Retirer le produit supprimé de l'affichage local
         const updatedInventory = inventory.filter(prod => prod._id !== productId);
         setInventory(updatedInventory);
         
-        // Mettre à jour les statistiques
         updateKpiStats(updatedInventory, stats[0]?.rawRevenue || 0, stats[1]?.rawValue || 0, currency);
       }
     } catch (error) {
@@ -207,7 +196,6 @@ export default function Dashboard() {
     }
   };
 
-  // RÉCUPÉRATION DES DONNÉES
   useEffect(() => {
     const fetchDashboardData = async (isInitialLoad = false) => {
       if (isInitialLoad) setIsLoading(true); 
@@ -272,7 +260,7 @@ export default function Dashboard() {
       <main className="p-6 lg:p-10 max-w-7xl mx-auto">
         <motion.div variants={container} initial="hidden" animate="show" className="space-y-10">
           
-          {/* HEADER */}
+         
 <motion.div 
   variants={item} 
   className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-[#1A3619]/10 pb-8"
@@ -295,7 +283,7 @@ export default function Dashboard() {
   </button>
 </motion.div>
 
-          {/* KPI CARDS */}
+          
           <motion.div variants={item} className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
   {stats.map((stat, idx) => {
     const Icon = stat.icon;
@@ -304,12 +292,10 @@ export default function Dashboard() {
         key={idx} 
         className={`p-7 rounded-[2rem] shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[170px] transition-all hover:scale-[1.02] duration-300 ${stat.bgColor} ${stat.textColor}`}
       >
-        {/* Ligne du haut : Uniquement l'icône principale à gauche */}
         <div className="flex items-center">
           <Icon className="w-7 h-7 stroke-[1.5]" />
         </div>
         
-        {/* Ligne du bas : Valeur en grand, puis titre en dessous */}
        <div className="mt-6">
   <p className="text-lg lg:text-2xl font-serif font-bold mb-1 tracking-tight">
     {stat.value}
@@ -323,7 +309,6 @@ export default function Dashboard() {
   })}
 </motion.div>
 
-          {/* RECENT ORDERS TABLE */}
          <div className="w-full">
             <motion.div variants={item} className="w-full bg-[#F6F1E7] rounded-[2rem] border border-[#1A3619]/10 shadow-sm p-6 lg:p-8">
   <div className="flex items-center justify-between mb-6">
@@ -345,14 +330,12 @@ export default function Dashboard() {
         <p className="text-[#1A3619]/50 font-medium">No recent orders found.</p>
       </div>
     ) : (
-      // Limits the display to only the 3 most recent orders
       recentOrders.slice(0, 3).map((order, idx) => (
         <div 
           key={idx} 
           className="bg-white rounded-3xl p-5 md:p-6 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-6 transition-all hover:shadow-md hover:-translate-y-0.5 duration-300 border border-[#1A3619]/5"
         >
           
-          {/* Section 1 : Produit et Date */}
           <div className="flex-1 w-full xl:w-auto">
             <h4 className="text-[#1A3619] text-base lg:text-lg font-bold">{order.product}</h4>
             <p className="text-[#1A3619]/50 text-xs font-medium mt-0.5">
@@ -360,7 +343,7 @@ export default function Dashboard() {
             </p>
           </div>
           
-          {/* Section 2 : Encadré acheteur et Prix (High contrast) */}
+         
           <div className="flex-1 w-full bg-[#FAF9F4] p-4 rounded-2xl border border-[#1A3619]/5 flex items-center justify-between">
             <div>
               <p className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 mb-0.5">
@@ -376,7 +359,6 @@ export default function Dashboard() {
             </div>
           </div>
           
-          {/* Section 3 : Boutons de statuts interactifs */}
           <div className="flex flex-col xl:items-end gap-2 w-full xl:w-auto shrink-0">
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#1A3619]/40 block">
               Update Status
@@ -385,7 +367,6 @@ export default function Dashboard() {
               {['New', 'Preparing', 'In Transit', 'Delivered'].map(status => {
                 const isActive = order.status === status;
                 
-                // High-contrast active styles for easy visual tracking
                 let activeStyle = "";
                 if (status === 'New') activeStyle = "bg-[#D96B40] text-white shadow-sm ring-1 ring-[#D96B40]/25";
                 if (status === 'Preparing') activeStyle = "bg-amber-500 text-white shadow-sm ring-1 ring-amber-500/25";
@@ -416,7 +397,7 @@ export default function Dashboard() {
 </motion.div>
           </div>
 
-          {/* INVENTORY GRID */}
+        
           <motion.div variants={item}>
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-serif font-bold text-[#1A3619]">Quick Inventory</h2>
@@ -459,12 +440,10 @@ export default function Dashboard() {
                       </div>
                       
                       <div className="flex gap-2">
-                        {/* ✏️ Bouton Edit Conservé[cite: 39] */}
                         <button onClick={() => openEditModal(prod)} className="flex-1 py-2.5 bg-[#1A3619]/5 hover:bg-[#1A3619]/10 text-[#1A3619] rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1">
                           <Edit3 className="w-3.5 h-3.5" /> Edit
                         </button>
                         
-                        {/* 🗑️ NOUVEAU : Bouton Delete remplace le bouton Update[cite: 39] */}
                         <button onClick={() => handleDeleteProduct(prod._id)} className="flex-none px-4 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-sm font-semibold transition-colors flex items-center justify-center gap-1 border border-red-100">
                           <Trash2 className="w-3.5 h-3.5" /> Delete
                         </button>
@@ -478,8 +457,6 @@ export default function Dashboard() {
         </motion.div>
       </main>
 
-      {/* === MODAL 1 : ADD NEW HARVEST === */}
-      {/* ... (Le code du Modal 1 reste identique) ... */}
       <AnimatePresence>
         {isModalOpen && (
           <>
@@ -536,8 +513,7 @@ export default function Dashboard() {
         )}
       </AnimatePresence>
 
-      {/* === MODAL 2 : EDIT / UPDATE EXISTING PRODUCT === */}
-      {/* ... (Le code du Modal 2 reste identique) ... */}
+   
       <AnimatePresence>
         {isEditModalOpen && (
           <>

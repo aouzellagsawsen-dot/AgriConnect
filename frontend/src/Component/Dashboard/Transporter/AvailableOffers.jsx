@@ -61,7 +61,6 @@ export default function AvailableOffers() {
     <div className="min-h-screen bg-[#FAF9F4] lg:pl-[340px] p-6 lg:p-10">
       <div className="max-w-6xl mx-auto space-y-8">
         
-        {/* EN-TÊTE HUMANISÉ AVEC LIGNE DE SÉPARATION */}
        <div className="border-b border-[#1A3619]/10 pb-6 mb-8">
   <h1 className="text-3xl lg:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
     <span className="block font-medium text-[#1A3619]/80">Ready to hit the road?</span>

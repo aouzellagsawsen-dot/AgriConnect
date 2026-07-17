@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff, Phone } from 'lucide-react'; // Ajout de l'icône Phone
+import { Leaf, Sprout, ShoppingBasket, Truck, ArrowLeft, Globe, MapPin, Eye, EyeOff, Phone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
@@ -28,17 +28,15 @@ export default function Auth() {
     libya: ["Tripoli", "Benghazi", "Misrata"]
   };
 
-  // --- GESTION DU CHAMP TÉLÉPHONE ---
+  // GESTION DU CHAMP TÉLÉPHONE 
   const handlePhoneChange = (e) => {
-    // Supprime tout ce qui n'est pas un chiffre
     const onlyNumbers = e.target.value.replace(/\D/g, '');
-    // Limite à 10 chiffres max
     if (onlyNumbers.length <= 10) {
       setPhone(onlyNumbers);
     }
   };
 
-  // --- FONCTION DE CONNEXION / INSCRIPTION ---
+  // FONCTION DE CONNEXION / INSCRIPTION 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
@@ -103,12 +101,9 @@ export default function Auth() {
 
   return (
     <div className="h-screen w-screen bg-[#0E1A0B] bg-gradient-to-br from-[#0E1A0B] via-[#162A12] to-[#1F3319] flex items-center justify-center p-4 font-sans relative overflow-hidden">
-      
-      {/* === DÉCORATIONS D'ARRIÈRE-PLAN === */}
       <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* BOUTON RETOUR VOLANT */}
       <Link 
         to="/" 
         className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-xl"
@@ -117,7 +112,6 @@ export default function Auth() {
         Back home
       </Link>
 
-      {/* === CARTE PRINCIPALE === */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -126,7 +120,6 @@ export default function Auth() {
       >
         <Leaf className="absolute -right-12 -top-12 text-[#557A46]/5 w-48 h-48 -rotate-45 pointer-events-none" strokeWidth={1} />
         
-        {/* EN-TÊTE DU FORMULAIRE */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-5 mb-5">
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-[#1A3619] text-[#FAF9F4]">
@@ -162,10 +155,8 @@ export default function Auth() {
           </div>
         </div>
 
-        {/* FORMULAIRE COMPACT */}
         <form className="space-y-4" onSubmit={handleSubmit}>
           
-          {/* SÉLECTEUR DE RÔLE */}
           {isSignUp && (
             <div className="space-y-1.5">
               <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -198,10 +189,8 @@ export default function Auth() {
             </div>
           )}
 
-          {/* GRILLE DES CHAMPS */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             
-            {/* NOM COMPLET */}
             {isSignUp && (
               <div className="space-y-1">
                 <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -218,7 +207,6 @@ export default function Auth() {
               </div>
             )}
 
-            {/* NUMÉRO DE TÉLÉPHONE (Uniquement à l'inscription) */}
             {isSignUp && (
               <div className="space-y-1">
                 <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -238,7 +226,6 @@ export default function Auth() {
               </div>
             )}
 
-            {/* EMAIL */}
             <div className={`space-y-1 ${!isSignUp ? 'sm:col-span-2' : ''}`}>
               <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
                 Email Address
@@ -253,7 +240,6 @@ export default function Auth() {
               />
             </div>
 
-            {/* MOT DE PASSE */}
             <div className={`space-y-1 ${!isSignUp ? 'sm:col-span-2' : ''}`}>
               <div className="flex justify-between items-center">
                 <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -284,7 +270,6 @@ export default function Auth() {
               </div>
             </div>
 
-            {/* PAYS ET RÉGION */}
             {isSignUp && (
               <>
                 <div className="space-y-1">
@@ -333,7 +318,7 @@ export default function Auth() {
                 </div>
               </>
             )}
-            {/* ADRESSE EXACTE (Uniquement à l'inscription) */}
+           
             {isSignUp && (
               <div className="space-y-1 sm:col-span-2">
                 <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
@@ -354,14 +339,12 @@ export default function Auth() {
             )}
           </div>
 
-          {/* AFFICHAGE DE L'ERREUR */}
           {errorMessage && (
             <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
               {errorMessage}
             </div>
           )}
 
-          {/* BOUTON DE SOUMISSION */}
           <button 
             type="submit"
             disabled={loading}

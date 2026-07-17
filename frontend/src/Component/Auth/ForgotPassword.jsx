@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { Leaf, ArrowLeft, Mail, CheckCircle2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import axios from 'axios'; // ⚠️ Ne pas oublier cet import !
+import axios from 'axios';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [step, setStep] = useState('email'); // 'email' ou 'success'
+  const [step, setStep] = useState('email'); 
   
-  // Nouveaux états pour gérer le chargement et les erreurs
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
@@ -19,16 +18,14 @@ export default function ForgotPassword() {
     if (email.trim() !== '') {
       setLoading(true);
       try {
-        // ENVOI DE LA REQUÊTE AU BACKEND
         const response = await axios.post('http://localhost:3000/api/auth/forgot-password', { 
           email 
         }, { withCredentials: true });
 
         if (response.data.success) {
-          setStep('success'); // On n'affiche l'écran de succès QUE si le backend a réussi
+          setStep('success'); 
         }
       } catch (error) {
-        // On affiche l'erreur envoyée par le backend (ex: "User not found")
         setErrorMessage(error.response?.data?.message || "Une erreur est survenue.");
       } finally {
         setLoading(false);
@@ -39,11 +36,9 @@ export default function ForgotPassword() {
   return (
     <div className="h-screen w-screen bg-[#0E1A0B] bg-gradient-to-br from-[#0E1A0B] via-[#162A12] to-[#1F3319] flex items-center justify-center p-4 font-sans relative overflow-hidden">
       
-      {/* === DÉCORATIONS D'ARRIÈRE-PLAN === */}
       <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* BOUTON RETOUR VOLANT */}
       <Link 
         to="/auth" 
         className="absolute top-6 left-6 z-50 flex items-center gap-2 text-white/60 hover:text-white transition-colors text-xs font-semibold uppercase tracking-wider bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2.5 rounded-xl"
@@ -52,7 +47,6 @@ export default function ForgotPassword() {
         Back to Sign In
       </Link>
 
-      {/* === CARTE PRINCIPALE === */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -105,7 +99,6 @@ export default function ForgotPassword() {
                   </div>
                 </div>
 
-                {/* AFFICHAGE DE L'ERREUR */}
                 {errorMessage && (
                   <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
                     {errorMessage}
@@ -143,7 +136,7 @@ export default function ForgotPassword() {
 
               <div className="space-y-3">
                 <button 
-                  onClick={handleSubmit} // Relance la requête d'envoi au lieu de juste changer l'écran
+                  onClick={handleSubmit} 
                   disabled={loading}
                   className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2.5 rounded-xl transition-all text-xs disabled:opacity-50"
                 >

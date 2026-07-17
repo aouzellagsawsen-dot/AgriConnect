@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { 
   ShoppingBag, Search, Store, Loader2, 
-  Filter, X, Calculator, MapPin, Heart, Tag // 📍 Import de l'icône Tag
+  Filter, X, Calculator, MapPin, Heart, Tag 
 } from 'lucide-react'; 
 
 export default function MarketPlace() {
@@ -14,7 +14,7 @@ export default function MarketPlace() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortOption, setSortOption] = useState("newest"); 
   const [selectedWilaya, setSelectedWilaya] = useState("All"); 
-  const [selectedCategory, setSelectedCategory] = useState("All"); // 📍 Nouvel état pour la catégorie
+  const [selectedCategory, setSelectedCategory] = useState("All");
 
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -67,7 +67,6 @@ export default function MarketPlace() {
     return ["All", ...new Set(regions)];
   }, [marketProducts]);
 
-  // 📍 Liste dynamique des catégories
   const categoriesList = useMemo(() => {
     const categories = marketProducts
       .map(prod => prod.category)
@@ -116,24 +115,20 @@ export default function MarketPlace() {
   const filteredAndSortedProducts = useMemo(() => {
     let result = marketProducts;
 
-    // 📍 Filtre de recherche textuelle (limité au nom maintenant que la catégorie a son menu)
     if (searchQuery) {
       result = result.filter(prod => 
         prod.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    // 📍 Filtre par Catégorie
     if (selectedCategory !== "All") {
       result = result.filter(prod => prod.category === selectedCategory);
     }
 
-    // Filtre par Wilaya
     if (selectedWilaya !== "All") {
       result = result.filter(prod => prod.farmerId?.region === selectedWilaya);
     }
 
-    // Tri
     result.sort((a, b) => {
       const priceA = parseFloat(a.price);
       const priceB = parseFloat(b.price);
@@ -175,8 +170,7 @@ export default function MarketPlace() {
       Brimming with seasonal picks, harvested with care by local hands straight for your kitchen.
     </p>
   </div>
-  
-  {/* 📍 Grille ajustée pour accommoder 4 champs (Catégorie ajoutée) */}
+
   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 w-full gap-3">
     <div className="relative w-full">
       <input 
@@ -189,7 +183,6 @@ export default function MarketPlace() {
       <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
     </div>
 
-    {/* 📍 Nouveau menu déroulant pour les Catégories */}
     <div className="relative w-full">
       <select 
         value={selectedCategory}

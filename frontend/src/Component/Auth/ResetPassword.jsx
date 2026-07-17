@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
 export default function ResetPassword() {
-  const { token } = useParams(); // Récupère le token de l'URL de l'email
+  const { token } = useParams(); 
   
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -13,13 +13,12 @@ export default function ResetPassword() {
   
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [step, setStep] = useState('form'); // 'form' ou 'success'
+  const [step, setStep] = useState('form'); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
 
-    // Vérifications basiques côté client
     if (password !== confirmPassword) {
       setErrorMessage("Passwords do not match.");
       return;
@@ -27,7 +26,7 @@ export default function ResetPassword() {
 
     setLoading(true);
     try {
-      // Envoi de la requête de réinitialisation vers ton backend
+      
       const response = await axios.post(`http://localhost:3000/api/auth/reset-password/${token}`, { 
         password 
       }, { withCredentials: true });
@@ -45,11 +44,9 @@ export default function ResetPassword() {
   return (
     <div className="h-screen w-screen bg-[#0E1A0B] bg-gradient-to-br from-[#0E1A0B] via-[#162A12] to-[#1F3319] flex items-center justify-center p-4 font-sans relative overflow-hidden">
       
-      {/* === DECORATIONS === */}
       <div className="absolute top-[-20%] left-[-10%] w-[45rem] h-[45rem] bg-[#557A46]/20 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-15%] right-[-10%] w-[40rem] h-[40rem] bg-[#D96B40]/15 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* === CARTE PRINCIPALE === */}
       <motion.div 
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -60,7 +57,6 @@ export default function ResetPassword() {
         
         <AnimatePresence mode="wait">
           {step === 'form' ? (
-            /* === ETAPE 1 : FORMULAIRE NOUVEAU MOT DE PASSE === */
             <motion.div
               key="reset-form-step"
               initial={{ opacity: 0, x: -10 }}
@@ -86,7 +82,6 @@ export default function ResetPassword() {
               </div>
 
               <form className="space-y-4" onSubmit={handleSubmit}>
-                {/* CHAMP 1 : NOUVEAU MOT DE PASSE */}
                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
                     New Password
@@ -111,8 +106,7 @@ export default function ResetPassword() {
                   </div>
                 </div>
 
-                {/* CHAMP 2 : CONFIRMATION */}
-                <div className="space-y-1.5">
+                 <div className="space-y-1.5">
                   <label className="text-[10px] font-bold tracking-widest uppercase text-gray-400">
                     Confirm New Password
                   </label>
@@ -129,8 +123,7 @@ export default function ResetPassword() {
                   </div>
                 </div>
 
-                {/* AFFICHAGE DES ERREURS */}
-                {errorMessage && (
+               {errorMessage && (
                   <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">
                     {errorMessage}
                   </div>
@@ -146,7 +139,6 @@ export default function ResetPassword() {
               </form>
             </motion.div>
           ) : (
-            /* === ETAPE 2 : SUCCÈS === */
             <motion.div
               key="reset-success-step"
               initial={{ opacity: 0, x: -10 }}

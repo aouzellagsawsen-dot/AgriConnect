@@ -127,56 +127,56 @@ export const checkAuth = async (req, res) => {
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const googleAuth = async (req, res) => {
-  const { credential } = req.body; 
+// export const googleAuth = async (req, res) => {
+//   const { credential } = req.body; 
   
-  try {
-    // 1. On interroge l'API Google avec l'access_token pour récupérer le profil utilisateur
-    const googleResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
-      headers: {
-        Authorization: `Bearer ${credential}`
-      }
-    });
+//   try {
+//     // 1. On interroge l'API Google avec l'access_token pour récupérer le profil utilisateur
+//     const googleResponse = await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+//       headers: {
+//         Authorization: `Bearer ${credential}`
+//       }
+//     });
     
-    // 2. On extrait les données envoyées par Google
-    const { email, name, email_verified } = googleResponse.data;
+//     // 2. On extrait les données envoyées par Google
+//     const { email, name, email_verified } = googleResponse.data;
 
-    if (!email_verified) {
-      return res.status(400).json({ success: false, message: "L'email Google n'est pas vérifié." });
-    }
+//     if (!email_verified) {
+//       return res.status(400).json({ success: false, message: "L'email Google n'est pas vérifié." });
+//     }
 
-    // 3. On regarde s'il existe déjà dans notre base de données
-    let user = await User.findOne({ email });
+//     // 3. On regarde s'il existe déjà dans notre base de données
+//     let user = await User.findOne({ email });
 
-    if (!user) {
-      // 4. S'il n'existe pas, on le crée automatiquement
-      // On génère un mot de passe aléatoire très complexe (car il se connectera toujours via Google)
-      const generatedPassword = crypto.randomBytes(16).toString('hex');
-      const hashedPassword = await bcryptjs.hash(generatedPassword, 10);
+//     if (!user) {
+//       // 4. S'il n'existe pas, on le crée automatiquement
+//       // On génère un mot de passe aléatoire très complexe (car il se connectera toujours via Google)
+//       const generatedPassword = crypto.randomBytes(16).toString('hex');
+//       const hashedPassword = await bcryptjs.hash(generatedPassword, 10);
 
-      user = new User({
-        email,
-        name,
-        password: hashedPassword,
-        isVerified: true, 
-      });
-      await user.save();
-      await sendWelcomeEmail(user.email, user.name); 
-    }
+//       user = new User({
+//         email,
+//         name,
+//         password: hashedPassword,
+//         isVerified: true, 
+//       });
+//       await user.save();
+//       await sendWelcomeEmail(user.email, user.name); 
+//     }
 
-    // 5. On le connecte en lui donnant notre cookie JWT (comme une connexion classique)
-    generateTokenAndSetCookie(res, user._id);
-    user.lastLogin = new Date();
-    await user.save();
+//     // 5. On le connecte en lui donnant notre cookie JWT (comme une connexion classique)
+//     generateTokenAndSetCookie(res, user._id);
+//     user.lastLogin = new Date();
+//     await user.save();
 
-    res.status(200).json({ 
-      success: true, 
-      message: "Connexion Google réussie", 
-      user: { ...user._doc, password: undefined } 
-    });
+//     res.status(200).json({ 
+//       success: true, 
+//       message: "Connexion Google réussie", 
+//       user: { ...user._doc, password: undefined } 
+//     });
 
-  } catch (error) {
-    console.error("Erreur dans googleAuth:", error);
-    res.status(400).json({ success: false, message: "Échec de l'authentification Google." });
-  }
-};
+//   } catch (error) {
+//     console.error("Erreur dans googleAuth:", error);
+//     res.status(400).json({ success: false, message: "Échec de l'authentification Google." });
+//   }
+// };

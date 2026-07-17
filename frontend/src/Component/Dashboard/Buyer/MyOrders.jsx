@@ -87,7 +87,7 @@ export default function MyOrders() {
           
           <motion.div variants={item} className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 border-b border-[#1A3619]/10 pb-6">
   <div>
-    {/* Titre et sous-titre plus humains et engageants */}
+    
     <h1 className="text-3xl md:text-4xl font-serif text-[#1A3619] tracking-tight leading-snug">
       <span className="block font-medium text-[#1A3619]/80">From sunny fields,</span>
       <span className="block font-bold text-[#D96B40]">track your harvests! </span>
@@ -125,7 +125,6 @@ export default function MyOrders() {
                 return (
                   <div key={order._id} className="bg-[#F6F1E7]  p-5 md:p-6 rounded-2xl border border-[#1A3619]/10 shadow-sm flex flex-col md:flex-row justify-between gap-6 transition-all hover:shadow-md">
                     
-                    {/* Détails de la commande */}
                     <div className="flex-1 space-y-4">
                       <div className="flex flex-wrap items-center justify-between gap-2">
                         <span className="text-xs font-bold text-[#1A3619]/50 uppercase tracking-wider">
@@ -137,7 +136,7 @@ export default function MyOrders() {
                       </div>
                       
                       <div>
-                        {/* 1. Nom de la commande (Produit) */}
+                        
                         <h3 className="text-xl font-bold text-[#1A3619] mb-1">{order.productName}</h3>
                         <div className="flex flex-wrap items-center gap-2 text-sm">
                           <span className="text-[#1A3619]/70 font-medium">Farmer:</span>
@@ -145,15 +144,11 @@ export default function MyOrders() {
                         </div>
                       </div>
 
-                      {/* ========================================== */}
-                      {/* 2. Suivi : Infos du Transporteur */}
-                      {/* ========================================== */}
                       <div className="bg-[#FAF9F4] p-4 rounded-2xl border border-[#1A3619]/5 max-w-md space-y-2">
                         <h4 className="text-xs font-bold text-[#1A3619]/70 uppercase tracking-wider flex items-center gap-1.5">
                           <Truck className="w-3.5 h-3.5 text-[#D96B40]" /> Delivery Details
                         </h4>
                         
-                        {/* Vérification si un transporteur est assigné (grâce au populate) */}
                         {order.transporterId && typeof order.transporterId === 'object' && order.transporterId.name ? (
                           <div className="space-y-1.5">
                             <p className="text-sm font-bold text-[#1A3619] flex items-center gap-1.5">
@@ -175,7 +170,6 @@ export default function MyOrders() {
                       </div>
                     </div>
 
-                    {/* Statut, Prix et Actions */}
                     <div className="flex flex-col justify-between items-start md:items-end gap-4 border-t md:border-t-0 md:border-l border-[#1A3619]/10 pt-4 md:pt-0 md:pl-6 min-w-[200px]">
                       
                       <div className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold ${statusStyle.color}`}>
