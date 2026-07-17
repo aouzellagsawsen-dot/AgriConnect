@@ -1,7 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Order from '../models/order.js';   
-import Product from '../Models/products.js'; 
+import Product from '../models/products.js'; 
 import User from '../models/user.model.js'; 
 import { verifyToken } from '../middlewares/verifyToken.js';
 

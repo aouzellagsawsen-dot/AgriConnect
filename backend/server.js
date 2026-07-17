@@ -4,12 +4,12 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 
-import authRoutes from './Routes/auth.route.js';
-import dashboardRoutes from './Routes/dashboardRoutes.js';
-import productsRoutes from './Routes/product.route.js';
-import orderRoutes from './Routes/order.route.js';
-import buyerRoutes from './Routes/buyer.route.js';
-import buyerDashRoutes from './Routes/buyerDashboard.js';
+import authRoutes from './routes/auth.route.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import productsRoutes from './routes/product.route.js';
+import orderRoutes from './routes/order.route.js';
+import buyerRoutes from './routes/buyer.route.js';
+import buyerDashRoutes from './routes/buyerDashboard.js';
 
 dotenv.config();
 
@@ -37,6 +37,10 @@ app.use('/api/buyers', buyerRoutes);
 app.use('/api/buyers/dashboard', buyerDashRoutes);
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Serveur lancé sur le port ${PORT}`);
-});
+
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Serveur lancé sur le port ${PORT}`);
+    });
+}
+export default app; 

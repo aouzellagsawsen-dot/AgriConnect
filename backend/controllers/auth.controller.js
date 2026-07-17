@@ -1,6 +1,6 @@
-import User from "../Models/user.model.js"
+import User from "../models/user.model.js"
 import bcryptjs from "bcryptjs"
-import { generateTokenAndSetCookie } from "../Utils/generateTokenandsetCookie.js"
+import { generateTokenAndSetCookie } from "../utils/generateTokenandsetCookie.js"
 import { sendPasswordResetEmail, sendResetSucessEmail, sendWelcomeEmail } from "../nodemailer/email.js"
 import crypto from "crypto"
 import axios from "axios"

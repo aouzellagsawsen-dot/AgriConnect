@@ -1,5 +1,5 @@
 import express from 'express';
-import Product from '../Models/products.js'; 
+import Product from '../models/products.js'; 
 import { verifyToken } from '../middlewares/verifyToken.js';
 import uploadCloud from '../config/cloudinary.js';
 

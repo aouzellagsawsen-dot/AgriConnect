@@ -1,8 +1,8 @@
 import express from 'express';
-import Order from '../Models/order.js';
-import User from '../Models/user.model.js';
-import Product from '../Models/products.js';
-import { calculateLogistics } from '../Utils/logistics.js';
+import Order from '../models/order.js';
+import User from '../models/user.model.js';
+import Product from '../models/products.js';
+import { calculateLogistics } from '../utils/logistics.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router = express.Router();
