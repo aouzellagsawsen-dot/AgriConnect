@@ -17,7 +17,8 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:5173', 
-    'https://agri-connect-rz3n.vercel.app' 
+    'https://agri-connect-rz3n.vercel.app',
+    'https://agri-connect-rz3n-aw7skivcn-s-aouzellag-8385s-projects.vercel.app'
   ],
   credentials: true, 
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
