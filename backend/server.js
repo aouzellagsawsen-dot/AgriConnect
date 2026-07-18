@@ -30,9 +30,32 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('Connexion à MongoDB réussie !'))
-    .catch((err) => console.error('Échec de la connexion à MongoDB :', err));
+// ==========================================
+// LA BONNE MÉTHODE DE CONNEXION
+// ==========================================
+let isConnected = false; 
+
+const connectDB = async () => {
+  if (isConnected) {
+    return; // Connexion instantanée si elle existe déjà
+  }
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI, {
+        serverSelectionTimeoutMS: 5000 // Sécurité : pas plus de 5s d'attente
+    });
+    isConnected = db.connections[0].readyState === 1;
+    console.log('Connexion à MongoDB réussie et prête !');
+  } catch (error) {
+    console.error('Erreur de connexion MongoDB :', error);
+  }
+};
+
+app.use(async (req, res, next) => {
+  await connectDB(); // Force la vérification avant chaque route
+  next();
+});
+// ==========================================
 
 app.get('/', (req, res) => {
   res.status(200).send("L'API AgriConnect est en ligne et fonctionne parfaitement ! 🚀");
@@ -52,4 +75,4 @@ if (process.env.NODE_ENV !== 'production') {
         console.log(`Serveur lancé sur le port ${PORT}`);
     });
 }
-export default app; 
+export default app;
