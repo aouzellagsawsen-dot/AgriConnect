@@ -16,7 +16,7 @@ export default function TransOrders() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.get('http://localhost:3000/api/orders/farmer-orders', {
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/farmer-orders', {
         withCredentials: true
       });
       if (response.data.success) {
@@ -32,7 +32,7 @@ export default function TransOrders() {
 
   const handleAcceptOrder = async (orderId) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${orderId}/status`, 
         { status: 'Preparing' },
         { withCredentials: true }
       );

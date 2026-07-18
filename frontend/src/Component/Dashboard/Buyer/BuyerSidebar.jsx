@@ -105,7 +105,7 @@ export default function BuyerSidebar() {
   const handleLogout = async () => {
     try {
       
-      const response = await axios.get('http://localhost:3000/api/auth/logout', { 
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/auth/logout', { 
         withCredentials: true 
       });
 

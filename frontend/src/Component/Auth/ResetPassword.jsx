@@ -27,7 +27,7 @@ export default function ResetPassword() {
     setLoading(true);
     try {
       
-      const response = await axios.post(`http://localhost:3000/api/auth/reset-password/${token}`, { 
+      const response = await axios.post(`https://agri-connect-01-delta.vercel.app/api/auth/reset-password/${token}`, { 
         password 
       }, { withCredentials: true });
 

@@ -36,13 +36,13 @@ export default function BuyerDashboard() {
         const timestamp = new Date().getTime();
 
         // Récupération des favoris
-        const favRes = await axios.get(`http://localhost:3000/api/buyers/favorites?t=${timestamp}`, { 
+        const favRes = await axios.get(`https://agri-connect-01-delta.vercel.app/api/buyers/favorites?t=${timestamp}`, { 
           withCredentials: true 
         });
         const favCount = favRes.data.success ? favRes.data.favorites.length : 0;
 
         // Récupération des données globales
-        const dashRes = await axios.get(`http://localhost:3000/api/buyers/dashboard?t=${timestamp}`, { 
+        const dashRes = await axios.get(`https://agri-connect-01-delta.vercel.app/api/buyers/dashboard?t=${timestamp}`, { 
           withCredentials: true 
         });
         

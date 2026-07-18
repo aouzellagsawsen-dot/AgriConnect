@@ -22,12 +22,12 @@ export default function BuyerFavorites() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const favRes = await axios.get('http://localhost:3000/api/buyers/favorites', { withCredentials: true });
+        const favRes = await axios.get('https://agri-connect-01-delta.vercel.app/api/buyers/favorites', { withCredentials: true });
         if (favRes.data.success) {
           setFavorites(favRes.data.favorites);
         }
 
-        const prodRes = await axios.get('http://localhost:3000/api/products/all', { withCredentials: true });
+        const prodRes = await axios.get('https://agri-connect-01-delta.vercel.app/api/products/all', { withCredentials: true });
         if (prodRes.data.success) {
           setAllProducts(prodRes.data.products);
         }
@@ -42,7 +42,7 @@ export default function BuyerFavorites() {
 
   const removeFavorite = async (farmerId) => {
     try {
-      const res = await axios.post('http://localhost:3000/api/buyers/favorites/toggle', { farmerId }, { withCredentials: true });
+      const res = await axios.post('https://agri-connect-01-delta.vercel.app/api/buyers/favorites/toggle', { farmerId }, { withCredentials: true });
       if (res.data.success && !res.data.isFavorited) {
         setFavorites(prev => prev.filter(farmer => farmer._id !== farmerId));
       }
@@ -74,7 +74,7 @@ export default function BuyerFavorites() {
     const totalAmount = parseFloat(selectedProduct.price) * orderQty;
 
     try {
-      const response = await axios.post('http://localhost:3000/api/orders/place-order', {
+      const response = await axios.post('https://agri-connect-01-delta.vercel.app/api/orders/place-order', {
         farmerId: selectedFarmer._id,
         productName: `${selectedProduct.name} (${orderQty}kg)`,
         totalAmount: totalAmount,

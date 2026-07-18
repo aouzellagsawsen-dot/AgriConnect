@@ -11,7 +11,7 @@ export default function MyDeliveries() {
   const fetchDeliveries = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get('http://localhost:3000/api/orders/my-deliveries', {
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/my-deliveries', {
         withCredentials: true
       });
       if (response.data.success) {
@@ -27,7 +27,7 @@ export default function MyDeliveries() {
   const handleComplete = async (id) => {
     if (!window.confirm("Do you confirm the delivery of the goods?")) return; 
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${id}/status`, 
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${id}/status`, 
         { status: 'Delivered' },
         { withCredentials: true }
       );

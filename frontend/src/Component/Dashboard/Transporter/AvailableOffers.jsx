@@ -12,7 +12,7 @@ export default function AvailableOffers() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await axios.get('http://localhost:3000/api/orders/available-offers', {
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/available-offers', {
         withCredentials: true
       });
       if (response.data.success) {
@@ -30,7 +30,7 @@ export default function AvailableOffers() {
     if (!window.confirm("Do you want to accept this delivery?")) return; 
 
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${id}/accept-delivery`, {}, {
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${id}/accept-delivery`, {}, {
         withCredentials: true
       });
 

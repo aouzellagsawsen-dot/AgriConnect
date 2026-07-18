@@ -14,7 +14,7 @@ export default function FarmerOrders() {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/orders/farmer-orders', {
+        const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/farmer-orders', {
           withCredentials: true
         });
         if (response.data.success) {
@@ -36,7 +36,7 @@ export default function FarmerOrders() {
     }
 
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${orderId}/status`, 
         { status: newStatus }, 
         { withCredentials: true }
       );

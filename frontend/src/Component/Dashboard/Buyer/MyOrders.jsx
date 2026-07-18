@@ -19,7 +19,7 @@ export default function MyOrders() {
   const fetchOrders = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get('http://localhost:3000/api/orders/my-orders', { 
+      const res = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/my-orders', { 
         withCredentials: true 
       });
       if (res.data.success) {
@@ -37,7 +37,7 @@ export default function MyOrders() {
     if (!window.confirm("Êtes-vous sûr de vouloir annuler cette commande ?")) return;
 
     try {
-      const res = await axios.put(`http://localhost:3000/api/orders/${orderId}/cancel`, {}, { 
+      const res = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${orderId}/cancel`, {}, { 
         withCredentials: true 
       });
       

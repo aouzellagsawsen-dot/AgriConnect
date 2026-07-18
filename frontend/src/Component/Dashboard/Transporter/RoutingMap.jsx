@@ -10,7 +10,7 @@ export default function RoutingMap() {
   useEffect(() => {
     const fetchRoutes = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/orders/my-deliveries', {
+        const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/my-deliveries', {
           withCredentials: true
         });
         if (response.data.success) {

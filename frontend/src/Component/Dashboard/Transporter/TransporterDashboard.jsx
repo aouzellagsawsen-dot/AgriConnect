@@ -22,7 +22,7 @@ export default function TransporterDashboard() {
 
   const fetchUserName = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/auth/check-auth', {
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/auth/check-auth', {
         withCredentials: true
       });
       if (response.data.success && response.data.user) {
@@ -38,7 +38,7 @@ export default function TransporterDashboard() {
       setIsLoading(true);
       setError(null);
 
-      const response = await axios.get('http://localhost:3000/api/orders/my-deliveries', {
+      const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/orders/my-deliveries', {
         withCredentials: true
       });
 
@@ -90,7 +90,7 @@ export default function TransporterDashboard() {
     if (!window.confirm("Confirmez-vous que la marchandise a bien été livrée à l'acheteur ?")) return;
     
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${deliveryId}/status`, 
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${deliveryId}/status`, 
         { status: 'Delivered' },
         { withCredentials: true }
       );

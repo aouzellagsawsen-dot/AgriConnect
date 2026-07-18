@@ -18,7 +18,7 @@ export default function ForgotPassword() {
     if (email.trim() !== '') {
       setLoading(true);
       try {
-        const response = await axios.post('http://localhost:3000/api/auth/forgot-password', { 
+        const response = await axios.post('https://agri-connect-01-delta.vercel.app/api/auth/forgot-password', { 
           email 
         }, { withCredentials: true });
 
@@ -98,6 +98,7 @@ export default function ForgotPassword() {
                     <Mail size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
                   </div>
                 </div>
+
 
                 {errorMessage && (
                   <div className="text-red-500 text-xs font-semibold text-center bg-red-50 py-2 rounded-lg">

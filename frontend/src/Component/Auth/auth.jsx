@@ -42,7 +42,7 @@ export default function Auth() {
     setErrorMessage('');
     setLoading(true);
 
-    const API_URL = "http://localhost:3000/api/auth"; 
+    const API_URL = "https://agri-connect-01-delta.vercel.app/api/auth"; 
 
     try {
       if (isSignUp) {

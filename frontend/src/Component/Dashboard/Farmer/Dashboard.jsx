@@ -111,7 +111,7 @@ export default function Dashboard() {
     if (newProduct.image) formData.append('image', newProduct.image);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/products', formData, {
+      const response = await axios.post('https://agri-connect-01-delta.vercel.app/api/products', formData, {
         withCredentials: true,
         headers: { 'Content-Type': 'multipart/form-data' }
       });
@@ -135,7 +135,7 @@ export default function Dashboard() {
 
   const handleOrderStatus = async (orderId, newStatus) => {
     try {
-      const response = await axios.put(`http://localhost:3000/api/orders/${orderId}/status`, 
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/orders/${orderId}/status`, 
         { status: newStatus }, 
         { withCredentials: true }
       );
@@ -156,7 +156,7 @@ export default function Dashboard() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.put(`http://localhost:3000/api/products/${editingProduct._id}`, editingProduct, {
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/products/${editingProduct._id}`, editingProduct, {
         withCredentials: true
       });
 
@@ -180,7 +180,7 @@ export default function Dashboard() {
     if (!isConfirmed) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3000/api/products/${productId}`, {
+      const response = await axios.delete(`https://agri-connect-01-delta.vercel.app/api/products/${productId}`, {
         withCredentials: true
       });
 
@@ -200,7 +200,7 @@ export default function Dashboard() {
     const fetchDashboardData = async (isInitialLoad = false) => {
       if (isInitialLoad) setIsLoading(true); 
       try {
-        const response = await axios.get('http://localhost:3000/api/dashboard', {
+        const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/dashboard', {
           withCredentials: true 
         });
         

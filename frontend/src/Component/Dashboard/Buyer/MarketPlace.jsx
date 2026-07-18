@@ -24,12 +24,12 @@ export default function MarketPlace() {
   useEffect(() => {
     const fetchMarketAndFavorites = async () => {
       try {
-        const productsRes = await axios.get('http://localhost:3000/api/products/all', { withCredentials: true });
+        const productsRes = await axios.get('https://agri-connect-01-delta.vercel.app/api/products/all', { withCredentials: true });
         if (productsRes.data.success) {
           setMarketProducts(productsRes.data.products);
         }
 
-        const favoritesRes = await axios.get('http://localhost:3000/api/buyers/favorites', { withCredentials: true });
+        const favoritesRes = await axios.get('https://agri-connect-01-delta.vercel.app/api/buyers/favorites', { withCredentials: true });
         if (favoritesRes.data.success) {
           setFavoriteFarmerIds(favoritesRes.data.favorites.map(f => f._id));
         }
@@ -46,7 +46,7 @@ export default function MarketPlace() {
   const toggleFavorite = async (farmerId) => {
     if (!farmerId) return;
     try {
-      const res = await axios.post('http://localhost:3000/api/buyers/favorites/toggle', { farmerId }, { withCredentials: true });
+      const res = await axios.post('https://agri-connect-01-delta.vercel.app/api/buyers/favorites/toggle', { farmerId }, { withCredentials: true });
       if (res.data.success) {
         if (res.data.isFavorited) {
           setFavoriteFarmerIds(prev => [...prev, farmerId]); 
@@ -89,7 +89,7 @@ export default function MarketPlace() {
     const totalAmount = parseFloat(selectedProduct.price) * orderQty;
 
     try {
-      const response = await axios.post('http://localhost:3000/api/orders/place-order', {
+      const response = await axios.post('https://agri-connect-01-delta.vercel.app/api/orders/place-order', {
         farmerId: selectedProduct.farmerId?._id,
         productId: selectedProduct._id,
         quantity: Number(orderQty),

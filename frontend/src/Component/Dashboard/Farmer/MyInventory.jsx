@@ -34,7 +34,7 @@ export default function MyInventory() {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/api/dashboard', {
+        const response = await axios.get('https://agri-connect-01-delta.vercel.app/api/dashboard', {
           withCredentials: true 
         });
         
@@ -81,7 +81,7 @@ export default function MyInventory() {
     if (!isConfirmed) return;
 
     try {
-      const response = await axios.delete(`http://localhost:3000/api/products/${productId}`, {
+      const response = await axios.delete(`https://agri-connect-01-delta.vercel.app/api/products/${productId}`, {
         withCredentials: true
       });
 
@@ -116,7 +116,7 @@ export default function MyInventory() {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.put(`http://localhost:3000/api/products/${editingProduct._id}`, editingProduct, {
+      const response = await axios.put(`https://agri-connect-01-delta.vercel.app/api/products/${editingProduct._id}`, editingProduct, {
         withCredentials: true
       });
 
